@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Life Spent On… — Time Reality Check</title>
+  <meta name="description" content="How much of your life have you spent doom-scrolling? Enter your age and daily habits. The results will haunt you.">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .tool-layout {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 32px;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+    @media (max-width: 800px) {
+      .tool-layout { grid-template-columns: 1fr; }
+    }
+
+    .form-panel {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      height: fit-content;
+      position: sticky;
+      top: 80px;
+    }
+    @media (max-width: 800px) {
+      .form-panel { position: static; }
+    }
+
+    .activity-input {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .activity-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      min-width: 160px;
+      color: var(--text-muted);
+    }
+    .activity-label .act-emoji { font-size: 1.1rem; }
+    .activity-num {
+      width: 80px;
+      padding: 8px 12px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: var(--font);
+      outline: none;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .activity-num:focus { border-color: var(--accent); }
+    .unit-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    /* Results */
+    .results-panel { display: flex; flex-direction: column; gap: 16px; }
+
+    .stat-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      animation: fadeIn 0.4s ease both;
+    }
+
+    .stat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .stat-name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+    .stat-years {
+      font-size: 1.6rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* CSS bar chart */
+    .bar-track {
+      height: 10px;
+      background: var(--bg3);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 1s cubic-bezier(.4,0,.2,1);
+    }
+
+    .stat-details {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .stat-detail strong { color: var(--text); }
+
+    .comparison {
+      font-size: 0.8rem;
+      color: var(--accent2);
+      margin-top: 8px;
+      padding: 6px 10px;
+      background: rgba(0,212,170,0.08);
+      border-radius: var(--radius-sm);
+      display: inline-block;
+    }
+
+    /* Summary card */
+    .summary-card {
+      background: linear-gradient(135deg, #12102a 0%, #0a1f18 100%);
+      border: 1px solid rgba(124,106,255,0.2);
+      border-radius: var(--radius);
+      padding: 32px;
+      text-align: center;
+    }
+    .summary-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .summary-stat-big {
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 12px 0 4px;
+    }
+    .summary-label { color: var(--text-muted); font-size: 0.9rem; }
+
+    .pie-chart {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      margin: 24px auto 16px;
+      position: relative;
+    }
+
+    .share-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 24px;
+      color: var(--text-muted);
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .empty-state .emoji { font-size: 3rem; margin-bottom: 12px; }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 20px;
+      font-size: 0.9rem;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="../" class="nav-logo">VibeCheck ✦</a>
+  <a href="../" class="nav-back">← Back to all tools</a>
+</nav>
+
+<div class="page-hero">
+  <h1>Life Spent On… ⏳</h1>
+  <p>How much of your existence have you traded for Netflix and TikTok? Let's find out.</p>
+</div>
+
+<div class="tool-layout">
+  <!-- Left: Form -->
+  <div class="form-panel">
+    <div class="form-group">
+      <label class="form-label">Your Age</label>
+      <input type="number" id="age" class="input" placeholder="e.g. 25" min="5" max="100" value="25">
+    </div>
+
+    <div style="margin-bottom:8px">
+      <label class="form-label">Daily Hours Spent On…</label>
+    </div>
+
+    <div class="activity-input">
+      <span class="activity-label"><span class="act-emoji">📱</span> Social media</span>
+      <input type="number" id="social" class="activity-num" value="2.5" min="0" max="24" step="0.5">
+      <span class="unit-label">hr/day</span>
+    </div>
+    <div class="activity-input">
+      <span class="activity-label"><span class="act-emoji">😴</span> Sleeping</span>
+      <input type="number" id="sleep" class="activity-num" value="7" min="0" max="24" step="0.5">
+      <span class="unit-label">hr/day</span>
+    </div>
+    <div class="activity-input">
+      <span class="activity-label"><span class="act-emoji">💼</span> Working</span>
+      <input type="number" id="work" class="activity-num" value="8" min="0" max="24" step="0.5">
+      <span class="unit-label">hr/day</span>
+    </div>
+    <div class="activity-input">
+      <span class="activity-label"><span class="act-emoji">🚗</span> Commuting</span>
+      <input type="number" id="commute" class="activity-num" value="1" min="0" max="24" step="0.5">
+      <span class="unit-label">hr/day</span>
+    </div>
+    <div class="activity-input">
+      <span class="activity-label"><span class="act-emoji">🍽️</span> Eating</span>
+      <input type="number" id="eating" class="activity-num" value="1.5" min="0" max="24" step="0.5">
+      <span class="unit-label">hr/day</span>
+    </div>
+    <div class="activity-input">
+      <span class="activity-label"><span class="act-emoji">📺</span> TV/Streaming</span>
+      <input type="number" id="tv" class="activity-num" value="2" min="0" max="24" step="0.5">
+      <span class="unit-label">hr/day</span>
+    </div>
+    <div class="activity-input">
+      <span class="activity-label"><span class="act-emoji">📲</span> Phone screen</span>
+      <input type="number" id="phone" class="activity-num" value="4" min="0" max="24" step="0.5">
+      <span class="unit-label">hr/day</span>
+    </div>
+    <div class="activity-input">
+      <span class="activity-label"><span class="act-emoji">🏃</span> Exercise</span>
+      <input type="number" id="exercise" class="activity-num" value="0.5" min="0" max="24" step="0.5">
+      <span class="unit-label">hr/day</span>
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="calculate()">
+      Show Me My Life Stats →
+    </button>
+  </div>
+
+  <!-- Right: Results -->
+  <div id="results" class="results-panel">
+    <div class="empty-state">
+      <div class="emoji">⏳</div>
+      <p>Adjust your hours and hit the button.<br>Prepare to feel things.</p>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2024 VibeCheck · <a href="../">← All tools</a></p>
+    <p class="mt-8" style="font-size:0.75rem;opacity:0.5">Averages based on daily habits since age 5.</p>
+  </div>
+</footer>
+
+<script>
+// Comparisons database
+const COMPARISONS = {
+  social:   [
+    n => `watched The Office ${Math.round(n * 365 / 73.2).toLocaleString()} times`,
+    n => `listened to ${Math.round(n * 365 / 0.057).toLocaleString()} songs`,
+    n => `scrolled ${Math.round(n * 365 * 400 / 5280).toLocaleString()} miles of content`,
+  ],
+  sleep:    [
+    n => `had ${Math.round(n * 365 / 1.5).toLocaleString()} complete sleep cycles`,
+    n => `dreamed for roughly ${Math.round(n * 365 * 2 / 24).toLocaleString()} days`,
+    n => `missed ${Math.round(n * 365).toLocaleString()} sunrises`,
+  ],
+  work:     [
+    n => `earned ${Math.round(n * 365).toLocaleString()} work-hours of experience`,
+    n => `attended ${Math.round(n * 365 / 1).toLocaleString()} theoretical 1-hour meetings`,
+    n => `could have written ${Math.round(n * 365 * 500 / 80000).toLocaleString()} novels`,
+  ],
+  commute:  [
+    n => `traveled ${Math.round(n * 365 * 30).toLocaleString()} miles (assuming 30mph avg)`,
+    n => `listened to ${Math.round(n * 365 / 10).toLocaleString()} full albums`,
+    n => `could have learned ${Math.round(n * 365 * 60 / 10080).toLocaleString()} languages in that time`,
+  ],
+  eating:   [
+    n => `eaten ${Math.round(n * 365 / 0.5).toLocaleString()} meals`,
+    n => `consumed roughly ${Math.round(n * 365 / 1.5 * 600).toLocaleString()} calories worth of sitting`,
+    n => `chewed ${Math.round(n * 365 * 2000).toLocaleString()} bites of food`,
+  ],
+  tv:       [
+    n => `watched ${Math.round(n * 365 / 1).toLocaleString()} episodes of TV`,
+    n => `seen every Marvel movie ${Math.round(n * 365 / 52).toLocaleString()} times`,
+    n => `sat through ${Math.round(n * 365 * 15).toLocaleString()} minutes of unskippable ads`,
+  ],
+  phone:    [
+    n => `unlocked your phone ${Math.round(n * 365 * 10).toLocaleString()} times`,
+    n => `seen ${Math.round(n * 365 * 200).toLocaleString()} pieces of content`,
+    n => `spent ${(n * 365 / 24 / 365).toFixed(2)} years just holding a glass rectangle`,
+  ],
+  exercise: [
+    n => `burned ${Math.round(n * 365 * 400).toLocaleString()} calories`,
+    n => `run roughly ${Math.round(n * 365 * 4).toLocaleString()} miles (at easy pace)`,
+    n => `done ${Math.round(n * 365 * 20).toLocaleString()} push-ups worth of effort`,
+  ],
+};
+
+const COLORS = {
+  social:   '#7c6aff',
+  sleep:    '#00d4aa',
+  work:     '#ffaa00',
+  commute:  '#ff7744',
+  eating:   '#ff6b9d',
+  tv:       '#4ecdc4',
+  phone:    '#45b7d1',
+  exercise: '#96e072',
+};
+
+const ACTIVITIES = [
+  { id: 'social',   label: 'Social Media',  emoji: '📱' },
+  { id: 'sleep',    label: 'Sleeping',      emoji: '😴' },
+  { id: 'work',     label: 'Working',       emoji: '💼' },
+  { id: 'commute',  label: 'Commuting',     emoji: '🚗' },
+  { id: 'eating',   label: 'Eating',        emoji: '🍽️' },
+  { id: 'tv',       label: 'TV/Streaming',  emoji: '📺' },
+  { id: 'phone',    label: 'Phone Screen',  emoji: '📲' },
+  { id: 'exercise', label: 'Exercise',      emoji: '🏃' },
+];
+
+window.addEventListener('load', () => {
+  const hash = window.location.hash.slice(1);
+  if (!hash) return;
+  try {
+    const data = JSON.parse(atob(hash));
+    if (data.age) document.getElementById('age').value = data.age;
+    ACTIVITIES.forEach(a => {
+      if (data[a.id] !== undefined) document.getElementById(a.id).value = data[a.id];
+    });
+    calculate();
+  } catch(e) {}
+});
+
+function calculate() {
+  const age = +document.getElementById('age').value || 25;
+  const yearsAlive = Math.max(age - 5, 1); // start habits around age 5
+
+  const values = {};
+  ACTIVITIES.forEach(a => {
+    values[a.id] = +document.getElementById(a.id).value || 0;
+  });
+
+  const totalHoursDay = Object.values(values).reduce((a, b) => a + b, 0);
+  const maxHrs = Math.max(...Object.values(values));
+
+  let html = '';
+  const statsForShare = [];
+
+  ACTIVITIES.forEach((act, i) => {
+    const hrs = values[act.id];
+    if (hrs <= 0) return;
+
+    const totalHours  = hrs * 365 * yearsAlive;
+    const totalDays   = totalHours / 24;
+    const totalMonths = totalDays / 30.44;
+    const totalYears  = totalDays / 365.25;
+
+    const barWidth = Math.round((hrs / Math.max(maxHrs, 1)) * 100);
+
+    // Pick a comparison
+    const compFns  = COMPARISONS[act.id] || [];
+    const compFn   = compFns[Math.floor(Math.random() * compFns.length)];
+    const compText = compFn ? compFn(totalYears) : null;
+
+    const yearStr  = totalYears >= 1
+      ? `${totalYears.toFixed(1)} years`
+      : totalMonths >= 1
+        ? `${totalMonths.toFixed(1)} months`
+        : `${Math.round(totalDays)} days`;
+
+    statsForShare.push(`${act.emoji} ${act.label}: ${yearStr}`);
+
+    html += `
+      <div class="stat-card" style="animation-delay:${i * 0.06}s">
+        <div class="stat-header">
+          <div class="stat-name">
+            <span>${act.emoji}</span>
+            <span>${act.label}</span>
+          </div>
+          <div class="stat-years">${yearStr}</div>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:0%;background:${COLORS[act.id]}" data-width="${barWidth}%"></div>
+        </div>
+        <div class="stat-details">
+          <span><strong>${Math.round(totalHours).toLocaleString()}</strong> total hours</span>
+          <span><strong>${Math.round(totalDays).toLocaleString()}</strong> days</span>
+          <span><strong>${hrs}h</strong> per day</span>
+        </div>
+        ${compText ? `<div class="comparison">💡 That's enough to have ${compText}</div>` : ''}
+      </div>
+    `;
+  });
+
+  // Summary
+  const totalHoursLife = Object.values(values).reduce((a,b) => a+b, 0) * 365 * yearsAlive;
+  const totalYearsLife = totalHoursLife / 24 / 365.25;
+  const pctOfLife      = (totalYearsLife / yearsAlive * 100).toFixed(0);
+
+  // Free time
+  const freeHoursDay = Math.max(0, 24 - totalHoursDay);
+  const freeYears    = (freeHoursDay * 365 * yearsAlive / 24 / 365.25).toFixed(1);
+
+  // CSS conic gradient pie
+  let conicParts = [];
+  let cumulative = 0;
+  const total = Object.values(values).reduce((a,b)=>a+b,0) || 1;
+  ACTIVITIES.forEach(act => {
+    const v = values[act.id];
+    if (v <= 0) return;
+    const pct = v / total * 100;
+    conicParts.push(`${COLORS[act.id]} ${cumulative}% ${cumulative + pct}%`);
+    cumulative += pct;
+  });
+  const pieGradient = `conic-gradient(${conicParts.join(', ')})`;
+
+  html += `
+    <div class="summary-card" style="animation-delay:${ACTIVITIES.length * 0.06}s">
+      <div style="font-size:2rem">🤯</div>
+      <div class="summary-title">The Big Picture</div>
+      <div class="summary-stat-big">${totalYearsLife.toFixed(1)}</div>
+      <div class="summary-label">years spent on tracked activities</div>
+      <div style="margin-top:8px;color:var(--text-muted);font-size:0.85rem">
+        That's <strong style="color:var(--text)">${pctOfLife}%</strong> of your life so far.
+        You have <strong style="color:var(--accent2)">${freeYears} years</strong> of free time left unaccounted.
+      </div>
+      <div class="pie-chart" style="background:${pieGradient}"></div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;font-size:0.75rem;margin-bottom:20px">
+        ${ACTIVITIES.filter(a=>values[a.id]>0).map(a =>
+          `<span style="display:flex;align-items:center;gap:4px">
+            <span style="width:10px;height:10px;border-radius:50%;background:${COLORS[a.id]};display:inline-block"></span>
+            ${a.label}
+          </span>`
+        ).join('')}
+      </div>
+      <div class="share-actions">
+        <button class="btn btn-primary" onclick="shareTwitter()">𝕏 Share my life stats</button>
+        <button class="btn btn-ghost" onclick="copyLink()">🔗 Copy link</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('results').innerHTML = html;
+
+  // Animate bars
+  setTimeout(() => {
+    document.querySelectorAll('.bar-fill[data-width]').forEach(el => {
+      el.style.width = el.dataset.width;
+    });
+  }, 100);
+
+  window._statsForShare = statsForShare;
+  window._totalYears    = totalYearsLife.toFixed(1);
+}
+
+function getHashData() {
+  const age = document.getElementById('age').value;
+  const data = { age };
+  ACTIVITIES.forEach(a => { data[a.id] = +document.getElementById(a.id).value || 0; });
+  return btoa(JSON.stringify(data));
+}
+
+function shareTwitter() {
+  const stats = (window._statsForShare || []).slice(0, 3).join('\n');
+  const total = window._totalYears || '?';
+  const hash  = getHashData();
+  const url   = encodeURIComponent(`${window.location.origin}${window.location.pathname}#${hash}`);
+  const text  = encodeURIComponent(`I've spent ${total} years on these activities 🤯\n\n${stats}\n\nCheck yours 👇`);
+  window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+}
+
+function copyLink() {
+  const hash = getHashData();
+  const url  = `${window.location.origin}${window.location.pathname}#${hash}`;
+  window.location.hash = hash;
+  navigator.clipboard.writeText(url).then(() => {
+    const t = document.getElementById('toast');
+    t.textContent = 'Link copied! 🔗';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  });
+}
+</script>
+
+</body>
+</html>

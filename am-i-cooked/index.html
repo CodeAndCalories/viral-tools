@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Am I Cooked? — Financial Reality Check</title>
+  <meta name="description" content="Enter your age, salary, savings, and rent. We'll tell you exactly how financially cooked you are.">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .tool-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+    @media (max-width: 720px) {
+      .tool-layout { grid-template-columns: 1fr; }
+    }
+
+    .form-panel {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+    }
+
+    .result-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Score ring */
+    .score-display {
+      text-align: center;
+      padding: 32px 24px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      position: relative;
+      overflow: hidden;
+    }
+    .score-ring {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 16px;
+      position: relative;
+    }
+    .score-ring svg {
+      width: 140px;
+      height: 140px;
+      transform: rotate(-90deg);
+    }
+    .score-ring .track {
+      fill: none;
+      stroke: var(--bg3);
+      stroke-width: 10;
+    }
+    .score-ring .fill {
+      fill: none;
+      stroke-width: 10;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1s cubic-bezier(.4,0,.2,1), stroke 0.5s;
+      stroke-dasharray: 376;
+      stroke-dashoffset: 376;
+    }
+    .score-number {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.2rem;
+      font-weight: 900;
+    }
+    .score-tier {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .score-label {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Metrics */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .metric {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+    }
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    .metric-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    .metric-status {
+      font-size: 0.75rem;
+      margin-top: 2px;
+    }
+    .good { color: var(--success); }
+    .warn { color: var(--warning); }
+    .bad  { color: var(--danger); }
+
+    /* Progress bar */
+    .progress-bar {
+      background: var(--bg3);
+      border-radius: 999px;
+      height: 8px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.8s ease;
+    }
+
+    /* Share card */
+    .share-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .placeholder-section {
+      background: var(--bg2);
+      border: 1px dashed rgba(124,106,255,0.3);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .placeholder-section strong {
+      display: block;
+      color: var(--accent);
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .placeholder-links {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .placeholder-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: var(--bg3);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-decoration: none;
+      border: 1px solid var(--border);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-muted);
+    }
+    .empty-state .emoji { font-size: 3rem; margin-bottom: 12px; }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 20px;
+      font-size: 0.9rem;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="../" class="nav-logo">VibeCheck ✦</a>
+  <a href="../" class="nav-back">← Back to all tools</a>
+</nav>
+
+<div class="page-hero">
+  <h1>Am I Cooked? 💀</h1>
+  <p>Enter your financial details. Get an honest reality check. No sugarcoating.</p>
+</div>
+
+<div class="tool-layout">
+  <!-- Left: Form -->
+  <div class="form-panel">
+    <div class="form-group">
+      <label class="form-label">Your Age</label>
+      <input type="number" id="age" class="input" placeholder="e.g. 26" min="16" max="80">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Annual Salary (pre-tax)</label>
+      <input type="number" id="salary" class="input" placeholder="e.g. 65000" min="0">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Monthly Rent / Mortgage</label>
+      <input type="number" id="rent" class="input" placeholder="e.g. 1500" min="0">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Total Savings &amp; Investments</label>
+      <input type="number" id="savings" class="input" placeholder="e.g. 12000" min="0">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Monthly Debt Payments</label>
+      <input type="number" id="debt" class="input" placeholder="e.g. 400 (loans, cards, etc.)" min="0">
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="calculate()">
+      Check My Situation →
+    </button>
+  </div>
+
+  <!-- Right: Results -->
+  <div class="result-panel" id="result-panel">
+    <div class="empty-state">
+      <div class="emoji">🧮</div>
+      <p>Fill in your info on the left to see your financial reality check.</p>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2024 VibeCheck · <a href="../">← All tools</a></p>
+    <p class="mt-8" style="font-size:0.75rem;opacity:0.5">Not financial advice. Just vibes.</p>
+  </div>
+</footer>
+
+<script>
+// ─── Load from URL hash if present ───────────────────────────────────────────
+window.addEventListener('load', () => {
+  const hash = window.location.hash.slice(1);
+  if (!hash) return;
+  try {
+    const data = JSON.parse(atob(hash));
+    document.getElementById('age').value    = data.age    || '';
+    document.getElementById('salary').value = data.salary || '';
+    document.getElementById('rent').value   = data.rent   || '';
+    document.getElementById('savings').value= data.savings|| '';
+    document.getElementById('debt').value   = data.debt   || '';
+    calculate();
+  } catch(e) {}
+});
+
+function calculate() {
+  const age    = +document.getElementById('age').value;
+  const salary = +document.getElementById('salary').value;
+  const rent   = +document.getElementById('rent').value;
+  const savings= +document.getElementById('savings').value;
+  const debt   = +document.getElementById('debt').value;
+
+  if (!age || !salary) {
+    showToast('Please enter at least your age and salary!');
+    return;
+  }
+
+  const monthlyIncome = salary / 12;
+
+  // ── Core metrics ──────────────────────────────────────────────────────────
+  // 1. Savings rate (savings / annual income)
+  const savingsRate = savings / salary;  // ratio
+  // 2. Rent-to-income ratio
+  const rentRatio   = rent / monthlyIncome;
+  // 3. Debt-to-income ratio
+  const debtRatio   = debt / monthlyIncome;
+  // 4. Net worth benchmark (age * salary / 10 rule)
+  const nwBenchmark = age * salary / 10;
+  const nwRatio     = savings / nwBenchmark;  // 1.0 = on track
+
+  // ── Score calculation (0-100) ─────────────────────────────────────────────
+  let score = 50; // baseline
+
+  // Savings rate scoring (max +25)
+  // 0% = 0pts, 10% = 10pts, 20% = 20pts, 30%+ = 25pts
+  const savingsPct  = savings / salary * 100;
+  score += Math.min(25, savingsPct * 0.85);
+
+  // Rent ratio scoring (max +25 for low, -20 for high)
+  // ideal: <30%. 30-40% neutral. 40-50% bad. >50% very bad
+  if (rentRatio <= 0.25)      score += 25;
+  else if (rentRatio <= 0.30) score += 18;
+  else if (rentRatio <= 0.40) score += 8;
+  else if (rentRatio <= 0.50) score -= 10;
+  else                        score -= 20;
+
+  // Debt ratio (max +15, -20 for high debt)
+  if (debtRatio === 0)        score += 15;
+  else if (debtRatio <= 0.10) score += 10;
+  else if (debtRatio <= 0.20) score += 0;
+  else if (debtRatio <= 0.36) score -= 10;
+  else                        score -= 20;
+
+  // Net worth for age (max +15)
+  if (nwRatio >= 1.5)         score += 15;
+  else if (nwRatio >= 1.0)    score += 10;
+  else if (nwRatio >= 0.5)    score += 4;
+  else if (nwRatio >= 0.25)   score -= 5;
+  else                        score -= 10;
+
+  score = Math.max(0, Math.min(100, Math.round(score)));
+
+  // ── Tier ─────────────────────────────────────────────────────────────────
+  let tier, tierColor, emoji;
+  if (score >= 90)      { tier = "You're Thriving";      emoji = "🔥"; tierColor = "#00d4aa"; }
+  else if (score >= 70) { tier = "You're Doing Alright"; emoji = "👍"; tierColor = "#7c6aff"; }
+  else if (score >= 50) { tier = "Kinda Cooked";         emoji = "😬"; tierColor = "#ffaa00"; }
+  else if (score >= 30) { tier = "Pretty Cooked";        emoji = "🫠"; tierColor = "#ff7744"; }
+  else                  { tier = "Fully Cooked";         emoji = "💀"; tierColor = "#ff4d4d"; }
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  const pct  = v => (v * 100).toFixed(1) + '%';
+  const usd  = v => '$' + Math.round(v).toLocaleString();
+  const statusClass = (good, ok) =>
+    (good ? 'good' : (ok ? 'warn' : 'bad'));
+
+  // status text helpers
+  const rentStatus  = rentRatio <= 0.30 ? ['✓ Healthy',    'good'] :
+                      rentRatio <= 0.40 ? ['⚠ A bit high', 'warn'] :
+                                          ['✗ Too high',   'bad' ];
+  const debtStatus  = debtRatio === 0   ? ['✓ Debt free!', 'good'] :
+                      debtRatio <= 0.20 ? ['✓ Manageable', 'good'] :
+                      debtRatio <= 0.36 ? ['⚠ Watch it',   'warn'] :
+                                          ['✗ Danger zone','bad' ];
+  const nwStatus    = nwRatio >= 1.0    ? ['✓ On track',   'good'] :
+                      nwRatio >= 0.5    ? ['⚠ Behind',     'warn'] :
+                                          ['✗ Way behind', 'bad' ];
+  const saveStatus  = savingsPct >= 20  ? ['✓ Solid',      'good'] :
+                      savingsPct >= 10  ? ['⚠ Could more', 'warn'] :
+                                          ['✗ Save more',  'bad' ];
+
+  // circumference for SVG ring = 2πr = 2 * π * 60 ≈ 376.99
+  const CIRCUM = 376.99;
+  const offset = CIRCUM - (score / 100) * CIRCUM;
+
+  document.getElementById('result-panel').innerHTML = `
+    <!-- Score ring -->
+    <div class="score-display fade-in">
+      <div class="score-ring">
+        <svg viewBox="0 0 140 140">
+          <circle class="track" cx="70" cy="70" r="60"/>
+          <circle class="fill" id="ring-fill" cx="70" cy="70" r="60"
+            style="stroke:${tierColor}; stroke-dashoffset:${CIRCUM}"/>
+        </svg>
+        <div class="score-number" style="color:${tierColor}">${score}</div>
+      </div>
+      <div class="score-tier">${emoji} ${tier}</div>
+      <div class="score-label">out of 100 · Financial Reality Score</div>
+    </div>
+
+    <!-- Metrics grid -->
+    <div class="metrics-grid fade-in" style="animation-delay:0.1s">
+      <div class="metric">
+        <div class="metric-label">Rent-to-Income</div>
+        <div class="metric-value">${pct(rentRatio)}</div>
+        <div class="metric-status ${rentStatus[1]}">${rentStatus[0]}</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,rentRatio*100*2)}%;background:${rentRatio<=0.30?'var(--success)':rentRatio<=0.40?'var(--warning)':'var(--danger)'}"></div></div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Debt-to-Income</div>
+        <div class="metric-value">${pct(debtRatio)}</div>
+        <div class="metric-status ${debtStatus[1]}">${debtStatus[0]}</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,debtRatio*200)}%;background:${debtRatio<=0.10?'var(--success)':debtRatio<=0.36?'var(--warning)':'var(--danger)'}"></div></div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Savings vs Benchmark</div>
+        <div class="metric-value">${usd(savings)}</div>
+        <div class="metric-status ${nwStatus[1]}">${nwStatus[0]} · target ${usd(nwBenchmark)}</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,nwRatio*100)}%;background:${nwRatio>=1?'var(--success)':nwRatio>=0.5?'var(--warning)':'var(--danger)'}"></div></div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Savings Rate</div>
+        <div class="metric-value">${savingsPct.toFixed(1)}%</div>
+        <div class="metric-status ${saveStatus[1]}">${saveStatus[0]}</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,savingsPct*3.33)}%;background:${savingsPct>=20?'var(--success)':savingsPct>=10?'var(--warning)':'var(--danger)'}"></div></div>
+      </div>
+    </div>
+
+    <!-- Share card -->
+    <div class="share-card fade-in" style="animation-delay:0.2s">
+      <div style="font-size:2rem;margin-bottom:8px">${emoji}</div>
+      <div style="font-size:1.2rem;font-weight:800;margin-bottom:4px">${tier}</div>
+      <div style="color:var(--text-muted);font-size:0.85rem;margin-bottom:16px">
+        Score: <strong style="color:${tierColor}">${score}/100</strong> ·
+        Rent ${pct(rentRatio)} · Debt ${pct(debtRatio)} ·
+        Savings ${usd(savings)}
+      </div>
+      <div class="share-actions" style="justify-content:center">
+        <button class="btn btn-secondary" onclick="shareTwitter()">𝕏 Share result</button>
+        <button class="btn btn-ghost" onclick="copyLink()">🔗 Copy link</button>
+      </div>
+    </div>
+
+    <!-- Affiliate placeholder -->
+    <div class="placeholder-section fade-in" style="animation-delay:0.3s">
+      <strong>💡 Improve your score</strong>
+      <div style="margin-bottom:6px;font-size:0.8rem">Sponsored suggestions — affiliate links go here</div>
+      <div class="placeholder-links">
+        <a href="#" class="placeholder-link">📊 [Budgeting App] — Track spending automatically · affiliate link</a>
+        <a href="#" class="placeholder-link">🏦 [High-Yield Savings] — Earn 5%+ APY · affiliate link</a>
+        <a href="#" class="placeholder-link">📈 [Investing App] — Start with $1 · affiliate link</a>
+      </div>
+    </div>
+  `;
+
+  // Animate the ring
+  setTimeout(() => {
+    const fill = document.getElementById('ring-fill');
+    if (fill) fill.style.strokeDashoffset = offset;
+  }, 100);
+}
+
+function getShareData() {
+  const age    = +document.getElementById('age').value;
+  const salary = +document.getElementById('salary').value;
+  const rent   = +document.getElementById('rent').value;
+  const savings= +document.getElementById('savings').value;
+  const debt   = +document.getElementById('debt').value;
+  return btoa(JSON.stringify({ age, salary, rent, savings, debt }));
+}
+
+function shareTwitter() {
+  const panel = document.getElementById('result-panel');
+  const tier  = panel.querySelector('.score-tier')?.textContent || '';
+  const score = panel.querySelector('.score-number')?.textContent || '';
+  const hash  = getShareData();
+  const url   = encodeURIComponent(`${window.location.origin}${window.location.pathname}#${hash}`);
+  const text  = encodeURIComponent(`I just checked my finances and got "${tier}" (${score}/100) 💀\n\nFind out if YOU are cooked 👇`);
+  window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+}
+
+function copyLink() {
+  const hash = getShareData();
+  const url  = `${window.location.origin}${window.location.pathname}#${hash}`;
+  navigator.clipboard.writeText(url).then(() => showToast('Link copied! 🔗'));
+  window.location.hash = hash;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+
+</body>
+</html>

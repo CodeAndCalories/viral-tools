@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VibeCheck — Free Tools That Hit Different</title>
+  <meta name="description" content="Free viral tools: financial reality checks, meal pickers, life calculators, and more. No sign up. No BS.">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Homepage-specific */
+    .hero {
+      padding: 80px 24px 60px;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(124,106,255,0.1);
+      border: 1px solid rgba(124,106,255,0.3);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: var(--text-muted);
+      max-width: 480px;
+      margin: 0 auto 40px;
+    }
+    .hero-stats {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    .hero-stat strong { color: var(--text); font-size: 1.1rem; display: block; }
+
+    /* Tool grid */
+    .tools-section {
+      padding: 0 24px 80px;
+    }
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .tool-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .tool-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .tool-card:hover {
+      border-color: rgba(124,106,255,0.4);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 0;
+      transform: translateY(-4px);
+    }
+    .tool-card:hover::before { opacity: 1; }
+    .tool-emoji {
+      font-size: 2.5rem;
+      line-height: 1;
+    }
+    .tool-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .tool-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      flex: 1;
+    }
+    .tool-cta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+    .tool-tag {
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 600;
+      background: rgba(124,106,255,0.1);
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .tool-arrow {
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      transition: transform 0.2s, color 0.2s;
+    }
+    .tool-card:hover .tool-arrow {
+      transform: translateX(4px);
+      color: var(--accent);
+    }
+
+    /* Ad placeholder */
+    .ad-banner {
+      max-width: 728px;
+      margin: 0 auto 40px;
+      background: var(--bg2);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+    .ad-banner span {
+      display: block;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.5;
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding: 60px 20px 40px; }
+      .hero-stats { gap: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-logo">VibeCheck ✦</a>
+  <span style="color:var(--text-muted);font-size:0.85rem;">Free tools, no BS</span>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">✦ 100% Free &amp; Client-Side</div>
+  <h1>
+    <span class="gradient-text">Free tools</span><br>
+    that hit different
+  </h1>
+  <p class="hero-sub">No sign-up. No ads (yet). No paywalls. Just genuinely useful tools built for real life.</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <strong>4</strong>
+      tools available
+    </div>
+    <div class="hero-stat">
+      <strong>Free</strong>
+      forever
+    </div>
+    <div class="hero-stat">
+      <strong>Zero</strong>
+      data collected
+    </div>
+  </div>
+</section>
+
+<section class="tools-section">
+  <p class="section-title">Pick your vibe</p>
+  <div class="tools-grid">
+
+    <a href="am-i-cooked/" class="tool-card">
+      <div class="tool-emoji">💀</div>
+      <div class="tool-name">Am I Cooked?</div>
+      <div class="tool-desc">
+        Financial reality check. Enter your age, salary, savings, and rent.
+        We'll tell you exactly how cooked you are — with receipts.
+      </div>
+      <div class="tool-cta">
+        <span class="tool-tag">Finance</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="what-should-i-eat/" class="tool-card">
+      <div class="tool-emoji">🍜</div>
+      <div class="tool-name">What Should I Eat?</div>
+      <div class="tool-desc">
+        Can't decide what to eat? Pick your mood, diet, budget, and time.
+        We'll serve up the perfect meal — with a full recipe.
+      </div>
+      <div class="tool-cta">
+        <span class="tool-tag" style="background:rgba(0,212,170,0.1);color:var(--accent2)">Food</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="life-spent/" class="tool-card">
+      <div class="tool-emoji">⏳</div>
+      <div class="tool-name">Life Spent On…</div>
+      <div class="tool-desc">
+        How much of your life have you spent doom-scrolling? Enter your age
+        and daily habits. The results will haunt you.
+      </div>
+      <div class="tool-cta">
+        <span class="tool-tag">Life Stats</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="pickup-lines/" class="tool-card">
+      <div class="tool-emoji">💘</div>
+      <div class="tool-name">AI Pickup Line Generator</div>
+      <div class="tool-desc">
+        Generate pickup lines by category or enter a name/topic for custom lines.
+        Rate them, share them, cringe at them.
+      </div>
+      <div class="tool-cta">
+        <span class="tool-tag" style="background:rgba(255,77,77,0.1);color:#ff6b6b">Fun</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<div class="container">
+  <div class="ad-banner">
+    <span>Advertisement</span>
+    Banner ad space — 728×90 · contact@vibecheck.tools
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2024 VibeCheck · Made with ☕ and questionable life choices</p>
+    <p class="mt-8">
+      <a href="am-i-cooked/">Am I Cooked?</a> ·
+      <a href="what-should-i-eat/">What Should I Eat?</a> ·
+      <a href="life-spent/">Life Spent On…</a> ·
+      <a href="pickup-lines/">Pickup Lines</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

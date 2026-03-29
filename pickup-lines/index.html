@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Pickup Line Generator — VibeCheck</title>
+  <meta name="description" content="Generate pickup lines by category or enter a name. Rate them, share them, cringe at them.">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .picker-layout {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    .controls-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .name-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      margin-top: 20px;
+    }
+    .name-row .form-group { flex: 1; margin-bottom: 0; }
+    .name-row .btn { flex-shrink: 0; white-space: nowrap; }
+
+    /* Line display */
+    .line-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      animation: fadeIn 0.35s ease both;
+    }
+
+    .line-hero {
+      background: linear-gradient(135deg, #16112e 0%, #0d1f1a 100%);
+      padding: 40px 32px 32px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .line-hero::before {
+      content: '"';
+      position: absolute;
+      top: 12px;
+      left: 24px;
+      font-size: 6rem;
+      line-height: 1;
+      color: rgba(124,106,255,0.15);
+      font-family: Georgia, serif;
+      pointer-events: none;
+    }
+    .line-cat-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 20px;
+    }
+    .line-text {
+      font-size: clamp(1.1rem, 3vw, 1.5rem);
+      font-weight: 700;
+      line-height: 1.4;
+      max-width: 480px;
+      margin: 0 auto 24px;
+    }
+
+    /* Rating */
+    .rating-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    .rate-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font);
+      color: var(--text);
+    }
+    .rate-btn:hover { transform: scale(1.08); }
+    .rate-btn.fire   { border-color: rgba(255,100,50,0.4); }
+    .rate-btn.skull  { border-color: rgba(124,106,255,0.4); }
+    .rate-btn.fire.voted  { background: rgba(255,100,50,0.15); }
+    .rate-btn.skull.voted { background: rgba(124,106,255,0.15); }
+    .rate-count { font-size: 0.85rem; font-weight: 600; }
+
+    .line-body {
+      padding: 24px 28px;
+    }
+
+    .line-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* History */
+    .history-section {
+      margin-top: 32px;
+    }
+    .history-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .history-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .history-item-text { flex: 1; color: var(--text-muted); }
+    .history-item-rating { font-size: 1rem; flex-shrink: 0; }
+
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 20px;
+      font-size: 0.9rem;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="../" class="nav-logo">VibeCheck ✦</a>
+  <a href="../" class="nav-back">← Back to all tools</a>
+</nav>
+
+<div class="page-hero">
+  <h1>Pickup Line Generator 💘</h1>
+  <p>200+ lines. Seven categories. Zero shame. Rate, share, and cringe freely.</p>
+</div>
+
+<div class="picker-layout">
+  <div class="controls-card">
+    <div class="form-group" style="margin-bottom:16px">
+      <label class="form-label">Category</label>
+      <div class="chip-group" id="cat-chips">
+        <button class="chip active" data-val="all">✨ All</button>
+        <button class="chip" data-val="cheesy">🧀 Cheesy</button>
+        <button class="chip" data-val="smooth">😎 Smooth</button>
+        <button class="chip" data-val="nerdy">🤓 Nerdy</button>
+        <button class="chip" data-val="foodie">🍕 Foodie</button>
+        <button class="chip" data-val="gym">💪 Gym</button>
+        <button class="chip" data-val="tech">💻 Tech</button>
+        <button class="chip" data-val="dark">🖤 Dark Humor</button>
+      </div>
+    </div>
+    <div class="name-row">
+      <div class="form-group">
+        <label class="form-label">Personalize with a name or topic (optional)</label>
+        <input type="text" id="name-input" class="input" placeholder="e.g. Alex, coffee, dogs…" maxlength="30">
+      </div>
+      <button class="btn btn-primary" onclick="generateLine()">Generate 💘</button>
+    </div>
+  </div>
+
+  <div id="line-result"></div>
+
+  <div class="history-section" id="history-section" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="history-title">Recently Generated</div>
+      <div id="stats-pills" style="display:flex;gap:8px"></div>
+    </div>
+    <div class="history-list" id="history-list"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2024 VibeCheck · <a href="../">← All tools</a></p>
+    <p class="mt-8" style="font-size:0.75rem;opacity:0.5">Use responsibly. We take no responsibility for outcomes.</p>
+  </div>
+</footer>
+
+<script>
+// ── Pickup line database ──────────────────────────────────────────────────────
+// Lines with {name} get the user's name injected. Lines with {topic} get the topic.
+const LINES = {
+  cheesy: [
+    "Are you a magician? Because whenever I look at you, everyone else disappears.",
+    "Do you have a map? I keep getting lost in your eyes.",
+    "Are you a parking ticket? Because you've got 'fine' written all over you.",
+    "Is your name Google? Because you have everything I've been searching for.",
+    "Do you believe in love at first sight, or should I walk by again?",
+    "Are you a camera? Every time I look at you, I smile.",
+    "Are you a bank loan? Because you have my interest.",
+    "Do you have a Band-Aid? I scraped my knee falling for you.",
+    "Is your dad a boxer? Because you're a knockout.",
+    "Are you a 45-degree angle? Because you're acute-y.",
+    "If you were a vegetable, you'd be a cute-cumber.",
+    "Are you French? Because Eiffel for you.",
+    "Do you like science? Because I've got great chemistry with you.",
+    "Are you a time traveler? Because I can see you in my future.",
+    "Is your name Ariel? Because I think we mermaid for each other.",
+    "Are you a star? Because your beauty lights up the room.",
+    "Do you have a pencil? I want to erase your past and write our future.",
+    "Are you a dictionary? You add meaning to my life.",
+    "Are you a sunset? Because you make everything more beautiful.",
+    "Hi {name}, did it hurt when you fell from heaven?",
+    "Hey {name}, are you a magnet? Because I'm attracted to you.",
+    "I told my friends about you, {name}. Now they want to meet the person who has my attention.",
+    "{name}, if you were a fruit, you'd be a fine-apple.",
+    "They say nothing lasts forever, {name}. Want to be my nothing?",
+    "Hi {name}, I was going to play it cool but I'd rather play it honest — you're stunning.",
+  ],
+  smooth: [
+    "I was having a pretty average day until you walked in and made it extraordinary.",
+    "You look like you have great taste. Want to grab coffee and prove me right?",
+    "I don't usually do this, but you seem like someone worth being awkward for.",
+    "I've been trying to think of a clever line but honestly you make it hard to think straight.",
+    "I noticed you from across the room and decided that worst case scenario is you say no.",
+    "If confidence is attractive, I'm about to become very attractive by talking to you.",
+    "I'm not going to pretend I walked over here for any other reason than to meet you.",
+    "You have the kind of energy that makes me want to stay wherever you are.",
+    "I'm not great at small talk, but I'm great at being genuinely interested in people like you.",
+    "There are a lot of people here, but you're the only one I wanted to meet.",
+    "You seem like someone who'd have really interesting things to say. Am I right?",
+    "I debated whether to come over for about three seconds and then decided life's too short.",
+    "You're either incredibly interesting or I'm making a very confident assumption. Let's find out.",
+    "I don't believe in wasting either of our time, so — can I get your number?",
+    "Hey {name}, I'm not a photographer, but I can picture us together.",
+    "So {name}, what's the story behind those eyes?",
+    "I feel like if I don't talk to you, I'll spend the rest of the night wondering what if.",
+    "{name}, I'd say you're drop-dead gorgeous, but I'd rather you stay alive and go on a date with me.",
+    "I'll be honest, {name} — I haven't thought of anything clever. I just knew I had to say hi.",
+    "The audacity to be that good-looking in public. Respect, {name}.",
+  ],
+  nerdy: [
+    "Are you made of copper and tellurium? Because you're CuTe.",
+    "Are you a black hole? Because you keep pulling me in and I can't escape.",
+    "I must be a snowflake because I've fallen for you.",
+    "Are you a Wi-Fi signal? Because I'm feeling a connection.",
+    "Do you like Star Wars? Because Yoda one for me.",
+    "Are you the square root of -1? Because you can't be real.",
+    "I must be a keyboard because you're just my type.",
+    "Are you made of dark matter? Because you're indescribable yet undeniable.",
+    "I'm not a mathematician, but I'm pretty good with numbers. Give me yours?",
+    "Are you a library book? Because I can't stop checking you out.",
+    "You must be the Higgs boson particle — everyone was looking for you and now I've found you.",
+    "Are you an electron? Because my world revolves around you.",
+    "I wish I was your derivative so I could lie tangent to your curves.",
+    "Are you a compiler? Because you make my heart run faster.",
+    "You must be a 90° angle — because you're looking right.",
+    "If you were a dinosaur, you'd be a Gorgeousaurus.",
+    "Are you a comet? Because you only come around once and you're worth watching.",
+    "Do you like science? Because I've got amazing chemistry with {name}.",
+    "{name}, you must be a rare element — I've never found anyone quite like you.",
+    "Hey {name}, I looked you up in the periodic table and I found Au (gold).",
+    "Are you quantum? Because the more I observe you, {name}, the more I want to know about you.",
+  ],
+  foodie: [
+    "Are you a pizza? Because even when you're a little cheesy, you're still amazing.",
+    "Do you work at Starbucks? Because I like you a latte.",
+    "Are you a taco? Because you make my heart do a salsa.",
+    "I like my coffee how I like my mornings — with you in them.",
+    "Are you a sushi chef? Because you're on a roll.",
+    "Do you like raisins? How about a date?",
+    "Are you baking bread? Because you're making me rise.",
+    "You're like a fine wine — I think about you when I should be doing other things.",
+    "Are you a croissant? Because you're wonderfully flaky and I mean that in the best way.",
+    "Is your name Sriracha? Because you're hot with everything.",
+    "Are you pasta? Because I can't resist you and I feel guilty about it.",
+    "You must be espresso — intense, warm, and impossible to get through the day without.",
+    "Are you a chef? Because you make my heart skip a beet.",
+    "I'd never ghost you. I'm not like other avocados — I don't disappear when it gets good.",
+    "Hey {name}, are you a dessert menu? Because I saved the best for last.",
+    "{name}, if you were a dish, you'd be a five-star experience.",
+    "I was going to cook dinner tonight but then I met {name} and suddenly I'd rather take you out.",
+    "Are you matcha? Because {name}, you've got that rare, acquired-taste energy that I can't stop thinking about.",
+    "You're like the perfect meal, {name} — everything about you just works.",
+    "Hey {name}, I heard you like good taste. I happen to specialize in exactly that.",
+  ],
+  gym: [
+    "Are you a personal trainer? Because you just gave my heart a workout.",
+    "Do you believe in muscle memory? Because I think my heart remembers you.",
+    "Are you a protein shake? Because I want you after every hard day.",
+    "I was going to skip leg day but now I can't stop running toward you.",
+    "Are you a deadlift? Because you're picking me up without even trying.",
+    "Do you do cardio? Because you just took my breath away.",
+    "My form on squats was perfect until you walked in.",
+    "Are you a rest day? Because I've been working hard just to get to you.",
+    "I've been lifting for years but nothing hits as hard as catching your eye.",
+    "Are you pre-workout? Because my heart has been racing since you got here.",
+    "I'm no spotter, but I'll always have your back.",
+    "You must do CrossFit, because you've completely destroyed my routine.",
+    "Are you a gym playlist? Because you make me want to push harder.",
+    "You're like the perfect rep — I want to do you again and again.",
+    "Hey {name}, I don't normally talk to people mid-workout but you made me break form.",
+    "{name}, are you a resistance band? Because I feel the tension between us.",
+    "I'd ask if you come here often, {name}, but I'd remember if I'd seen you.",
+    "My trainer said to work on my weaknesses. I think that's my ability to talk to someone like {name}.",
+    "{name}, you've got the kind of energy that makes the whole gym better.",
+    "I was going to PR today but then you showed up and now all my goals have changed, {name}.",
+  ],
+  tech: [
+    "Are you a software update? Because every time I see you, I feel like improving.",
+    "Are you JavaScript? Because you make my heart asynchronous.",
+    "Do you have 11 protons? Because you're sodium fine.",
+    "Are you HTTP? Because without you, I feel like a 404.",
+    "I must be an API — every time you call, I respond.",
+    "Are you a recursive function? Because I keep coming back to you.",
+    "Are you CSS? Because you've got style.",
+    "I'd never use a dark pattern on you — I want you to opt in willingly.",
+    "Are you a git repository? Because I want to commit to you.",
+    "You must be a great UX designer because every interaction with you feels intuitive.",
+    "Are you a merge conflict? Because I can't move forward until I resolve my feelings for you.",
+    "My love for you has O(1) complexity — it doesn't grow slower the more I get to know you.",
+    "Are you a server? Because you're handling my requests perfectly.",
+    "I don't need Stack Overflow to solve this — I just need your number.",
+    "Hey {name}, are you a terminal? Because you give me commands I'm happy to follow.",
+    "{name}, you're like open source — the more I discover about you, the better you get.",
+    "I'd never deprecate you, {name}. You're a core dependency.",
+    "Are you a keyboard shortcut, {name}? Because I want to use you every day.",
+    "{name}, you're like a well-written function — elegant, efficient, and impossible to replace.",
+    "I've been debugging my love life for years, {name}. I think you're the fix I've been looking for.",
+  ],
+  dark: [
+    "Are you a cemetery? Because I'm dying to get into you.",
+    "I'm not a ghost hunter but I'd definitely follow you into a dark room.",
+    "Are you a villain? Because you just made my whole moral compass spin.",
+    "I was depressed until I met you. Now I'm still depressed but I smile about it.",
+    "You're like my will to live — rare, precious, and I need to hold onto you.",
+    "Are you a horror movie? Because I can't look away even though I probably should.",
+    "I've made some questionable decisions in life but meeting you won't be one of them.",
+    "Are you a crime scene? Because I can't stop investigating you.",
+    "You're like my browser history — I probably shouldn't share you but I want to.",
+    "Are you chaos? Because you've completely disrupted my sense of order and I love it.",
+    "I was told I have commitment issues. Then you walked in and suddenly I want a five-year plan.",
+    "Are you a deadline? Because I've been avoiding you but I know eventually I'll cave.",
+    "They say love is painful. You look like exactly the right kind of trouble.",
+    "Are you a plot twist? Because nothing about meeting you went the way I expected.",
+    "I'm emotionally unavailable in most situations. You seem like the exception.",
+    "Hey {name}, I googled 'how to get someone's attention' and none of the results mentioned just being honest. So here I am, being honest — I think you're wonderful.",
+    "{name}, they say you should avoid people who make you feel things. Clearly I don't follow advice.",
+    "I have terrible taste in everything, {name}. You might be the first good decision I've made.",
+    "{name}, my therapist said I need to work on opening up. You seem like a good reason to try.",
+    "I wasn't planning on catching feelings today, {name}, but here we are.",
+  ],
+};
+
+// Flatten all lines
+const ALL_LINES = Object.entries(LINES).flatMap(([cat, lines]) =>
+  lines.map(line => ({ line, cat }))
+);
+
+// Category meta
+const CAT_META = {
+  cheesy: { label: '🧀 Cheesy',      color: '#ffaa00', bg: 'rgba(255,170,0,0.15)' },
+  smooth: { label: '😎 Smooth',      color: '#00d4aa', bg: 'rgba(0,212,170,0.15)' },
+  nerdy:  { label: '🤓 Nerdy',       color: '#7c6aff', bg: 'rgba(124,106,255,0.2)' },
+  foodie: { label: '🍕 Foodie',      color: '#ff6b9d', bg: 'rgba(255,107,157,0.15)' },
+  gym:    { label: '💪 Gym',         color: '#96e072', bg: 'rgba(150,224,114,0.15)' },
+  tech:   { label: '💻 Tech',        color: '#45b7d1', bg: 'rgba(69,183,209,0.15)' },
+  dark:   { label: '🖤 Dark Humor',  color: '#aaaaaa', bg: 'rgba(170,170,170,0.1)' },
+};
+
+// Chip selector
+document.querySelectorAll('.chip-group').forEach(group => {
+  group.addEventListener('click', e => {
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+    group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+  });
+});
+
+// Enter key triggers generate
+document.getElementById('name-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') generateLine();
+});
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let history   = [];
+let lastIndex = -1;
+let ratings   = JSON.parse(localStorage.getItem('vc_ratings') || '{}');
+let currentLine = null;
+
+function saveRatings() {
+  localStorage.setItem('vc_ratings', JSON.stringify(ratings));
+}
+
+// ── Generate ──────────────────────────────────────────────────────────────────
+function generateLine() {
+  const cat   = document.querySelector('#cat-chips .chip.active')?.dataset.val || 'all';
+  const name  = document.getElementById('name-input').value.trim();
+
+  let pool = cat === 'all' ? [...ALL_LINES] : ALL_LINES.filter(l => l.cat === cat);
+  if (pool.length === 0) pool = ALL_LINES;
+
+  // Avoid repeating last line
+  let filtered = pool.filter((_, i) => i !== lastIndex);
+  if (filtered.length === 0) filtered = pool;
+
+  // If name given, prefer lines with {name} placeholder
+  let named = name ? filtered.filter(l => l.line.includes('{name}') || l.line.includes('{topic}')) : [];
+  const source = named.length > 0 && Math.random() < 0.65 ? named : filtered;
+  const pick   = source[Math.floor(Math.random() * source.length)];
+  lastIndex    = pool.indexOf(pick);
+
+  // Inject name/topic
+  let lineText = pick.line;
+  if (name) {
+    lineText = lineText.replace(/\{name\}/g, name).replace(/\{topic\}/g, name);
+  } else {
+    lineText = lineText.replace(/\{name\}/g, 'you').replace(/\{topic\}/g, 'this');
+  }
+
+  currentLine = { text: lineText, cat: pick.cat, original: pick.line };
+
+  // Add to history (max 5)
+  history.unshift({ text: lineText, cat: pick.cat });
+  if (history.length > 5) history.pop();
+
+  renderLine(lineText, pick.cat);
+  renderHistory();
+}
+
+function renderLine(text, cat) {
+  const meta  = CAT_META[cat] || CAT_META.cheesy;
+  const key   = btoa(text.slice(0, 30));
+  const votes = ratings[key] || { fire: 0, skull: 0, voted: null };
+
+  document.getElementById('line-result').innerHTML = `
+    <div class="line-card">
+      <div class="line-hero">
+        <div class="line-cat-badge" style="background:${meta.bg};color:${meta.color}">${meta.label}</div>
+        <div class="line-text">"${text}"</div>
+        <div class="rating-row">
+          <button class="rate-btn fire ${votes.voted === 'fire' ? 'voted' : ''}"
+            onclick="rate('${key}', 'fire', this)" id="btn-fire">
+            🔥 <span class="rate-count" id="count-fire">${votes.fire}</span>
+          </button>
+          <button class="rate-btn skull ${votes.voted === 'skull' ? 'voted' : ''}"
+            onclick="rate('${key}', 'skull', this)" id="btn-skull">
+            💀 <span class="rate-count" id="count-skull">${votes.skull}</span>
+          </button>
+        </div>
+      </div>
+      <div class="line-body">
+        <div class="line-actions">
+          <button class="btn btn-primary" onclick="generateLine()">Generate another 🎲</button>
+          <button class="btn btn-secondary" onclick="copyLine()">📋 Copy line</button>
+          <button class="btn btn-ghost" onclick="shareTwitter()">𝕏 Share</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function rate(key, type, btn) {
+  if (!ratings[key]) ratings[key] = { fire: 0, skull: 0, voted: null };
+  const r = ratings[key];
+
+  if (r.voted === type) {
+    // Undo vote
+    r[type] = Math.max(0, r[type] - 1);
+    r.voted  = null;
+    btn.classList.remove('voted');
+  } else {
+    // Undo previous vote if any
+    if (r.voted) {
+      r[r.voted] = Math.max(0, r[r.voted] - 1);
+      document.getElementById(`btn-${r.voted}`)?.classList.remove('voted');
+    }
+    r[type]++;
+    r.voted = type;
+    btn.classList.add('voted');
+  }
+
+  document.getElementById('count-fire').textContent  = r.fire;
+  document.getElementById('count-skull').textContent = r.skull;
+  saveRatings();
+}
+
+function copyLine() {
+  if (!currentLine) return;
+  navigator.clipboard.writeText(currentLine.text).then(() => showToast('Copied! 📋 Go get \'em.'));
+}
+
+function shareTwitter() {
+  if (!currentLine) return;
+  const text = encodeURIComponent(`"${currentLine.text}" 💘\n\nGenerate your own pickup lines →`);
+  const url  = encodeURIComponent(window.location.href);
+  window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+}
+
+function renderHistory() {
+  if (history.length === 0) return;
+  document.getElementById('history-section').style.display = 'block';
+
+  const totalFire  = Object.values(ratings).reduce((a, r) => a + (r.fire  || 0), 0);
+  const totalSkull = Object.values(ratings).reduce((a, r) => a + (r.skull || 0), 0);
+
+  document.getElementById('stats-pills').innerHTML = `
+    <span class="stat-pill">🔥 ${totalFire}</span>
+    <span class="stat-pill">💀 ${totalSkull}</span>
+  `;
+
+  document.getElementById('history-list').innerHTML = history.map(item => {
+    const meta = CAT_META[item.cat] || CAT_META.cheesy;
+    return `
+      <div class="history-item">
+        <span class="history-item-text">"${item.text}"</span>
+        <span class="history-item-rating" style="color:${meta.color}">${meta.label.split(' ')[0]}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// Auto-generate on load
+generateLine();
+</script>
+
+</body>
+</html>

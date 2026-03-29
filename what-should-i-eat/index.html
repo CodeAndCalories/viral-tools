@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What Should I Eat? — Meal Picker</title>
+  <meta name="description" content="Can't decide what to eat? Pick your mood, diet, budget, and time. We'll serve up the perfect meal with a full recipe.">
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .picker-layout {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    .picker-form {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+
+    .picker-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 500px) {
+      .picker-row { grid-template-columns: 1fr; }
+    }
+
+    /* Meal result card */
+    .meal-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      animation: fadeIn 0.4s ease both;
+    }
+
+    .meal-hero {
+      background: linear-gradient(135deg, #1a1530, #0f1f1a);
+      padding: 40px 32px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .meal-emoji-big {
+      font-size: 5rem;
+      line-height: 1;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 8px 24px rgba(0,0,0,0.5));
+    }
+    .meal-name {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .meal-description {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    .meal-badges {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .meal-body {
+      padding: 28px 32px;
+    }
+
+    .meal-section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .ingredients-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .ingredient-tag {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .recipe-steps {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .recipe-step {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .step-num {
+      min-width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--accent), #9b8aff);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .step-text { color: var(--text-muted); font-size: 0.9rem; padding-top: 4px; }
+
+    .meal-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .affiliate-box {
+      margin-top: 24px;
+      padding: 16px;
+      background: var(--bg3);
+      border: 1px dashed rgba(0,212,170,0.3);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .affiliate-box strong {
+      color: var(--accent2);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .affiliate-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      padding: 8px 16px;
+      background: rgba(0,212,170,0.1);
+      border: 1px solid rgba(0,212,170,0.3);
+      border-radius: var(--radius-sm);
+      color: var(--accent2);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .affiliate-btn:hover { background: rgba(0,212,170,0.2); }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 20px;
+      font-size: 0.9rem;
+      z-index: 1000;
+      transition: transform 0.3s ease;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="../" class="nav-logo">VibeCheck ✦</a>
+  <a href="../" class="nav-back">← Back to all tools</a>
+</nav>
+
+<div class="page-hero">
+  <h1>What Should I Eat? 🍜</h1>
+  <p>Stop staring at the fridge. Tell us your vibe and we'll pick your meal.</p>
+</div>
+
+<div class="picker-layout">
+  <div class="picker-form">
+    <div class="form-group">
+      <label class="form-label">Mood</label>
+      <div class="chip-group" id="mood-chips">
+        <button class="chip active" data-val="comfort">😌 Comfort</button>
+        <button class="chip" data-val="healthy">🥗 Healthy</button>
+        <button class="chip" data-val="quick">⚡ Quick</button>
+        <button class="chip" data-val="fancy">✨ Fancy</button>
+        <button class="chip" data-val="adventurous">🌶️ Adventurous</button>
+      </div>
+    </div>
+    <div class="picker-row">
+      <div class="form-group">
+        <label class="form-label">Diet</label>
+        <div class="chip-group" id="diet-chips">
+          <button class="chip active" data-val="any">Any</button>
+          <button class="chip" data-val="vegetarian">🌿 Veggie</button>
+          <button class="chip" data-val="vegan">🌱 Vegan</button>
+          <button class="chip" data-val="keto">🥩 Keto</button>
+          <button class="chip" data-val="glutenfree">🌾 GF</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Budget</label>
+        <div class="chip-group" id="budget-chips">
+          <button class="chip active" data-val="$">$ Cheap</button>
+          <button class="chip" data-val="$$">$$ Mid</button>
+          <button class="chip" data-val="$$$">$$$ Treat</button>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Time Available</label>
+      <div class="chip-group" id="time-chips">
+        <button class="chip active" data-val="15">⚡ 15 min</button>
+        <button class="chip" data-val="30">🕐 30 min</button>
+        <button class="chip" data-val="60">👨‍🍳 1 hr+</button>
+      </div>
+    </div>
+    <button class="btn btn-teal" style="width:100%;margin-top:8px;font-size:1rem" onclick="pickMeal()">
+      Find My Meal 🍽️
+    </button>
+  </div>
+
+  <div id="meal-result"></div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2024 VibeCheck · <a href="../">← All tools</a></p>
+  </div>
+</footer>
+
+<script>
+// ── Chip selector logic ───────────────────────────────────────────────────────
+document.querySelectorAll('.chip-group').forEach(group => {
+  group.addEventListener('click', e => {
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+    group.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+  });
+});
+
+function getChip(groupId) {
+  return document.querySelector(`#${groupId} .chip.active`)?.dataset.val || '';
+}
+
+// ── Meal database ─────────────────────────────────────────────────────────────
+const MEALS = [
+  // COMFORT ──────────────────────────────────────────────────────────────────
+  {
+    name: "Mac & Cheese", emoji: "🧀", mood: ["comfort"], diet: ["any","vegetarian"],
+    budget: ["$","$$"], time: [15,30],
+    desc: "Creamy, gooey, life-affirming. The ultimate comfort food that never lets you down.",
+    ingredients: ["Pasta","Cheddar cheese","Butter","Milk","Salt","Black pepper","Garlic powder"],
+    difficulty: "Easy", cookTime: "20 min",
+    recipe: [
+      "Boil pasta in salted water until al dente, drain and set aside.",
+      "Melt butter in the same pot over medium heat, whisk in flour for 1 min.",
+      "Slowly pour in milk, whisking constantly until thick and smooth.",
+      "Remove from heat, stir in cheese until fully melted.",
+      "Fold in pasta, season with salt, pepper, and garlic powder. Serve hot."
+    ]
+  },
+  {
+    name: "Grilled Cheese & Tomato Soup", emoji: "🥪", mood: ["comfort"], diet: ["any","vegetarian"],
+    budget: ["$"], time: [15,30],
+    desc: "Crispy, buttery sandwich meets rich, velvety soup. Dunking required.",
+    ingredients: ["Sourdough bread","Butter","Cheddar","Gruyère","Canned tomatoes","Onion","Garlic","Cream","Basil"],
+    difficulty: "Easy", cookTime: "25 min",
+    recipe: [
+      "Sauté diced onion and garlic in olive oil until softened.",
+      "Add canned tomatoes, simmer 15 min, blend until smooth, stir in cream.",
+      "Butter bread slices, layer cheese, grill in a pan until golden and melty.",
+      "Season soup with salt, pepper, and fresh basil.",
+      "Serve soup hot with the grilled cheese on the side for dunking."
+    ]
+  },
+  {
+    name: "Chicken Pot Pie", emoji: "🥧", mood: ["comfort"], diet: ["any"],
+    budget: ["$$"], time: [60],
+    desc: "Flaky pastry crust, creamy filling, tender chicken. Hug in a dish.",
+    ingredients: ["Pie crust","Chicken breast","Carrots","Peas","Celery","Onion","Butter","Flour","Chicken broth","Heavy cream"],
+    difficulty: "Medium", cookTime: "60 min",
+    recipe: [
+      "Cook diced chicken in butter until done, remove and set aside.",
+      "Sauté onion, carrots, celery until soft. Add flour, cook 1 min.",
+      "Pour in chicken broth and cream, stir until thickened.",
+      "Add chicken and peas, season well, pour into pie dish.",
+      "Top with pie crust, crimp edges, brush with egg wash, bake 400°F for 30-35 min until golden."
+    ]
+  },
+  {
+    name: "Ramen", emoji: "🍜", mood: ["comfort","adventurous"], diet: ["any","vegetarian"],
+    budget: ["$","$$"], time: [30,60],
+    desc: "Umami-loaded broth, bouncy noodles, perfect soft egg. Pure soul food.",
+    ingredients: ["Ramen noodles","Soy sauce","Miso paste","Sesame oil","Soft-boiled egg","Green onion","Nori","Mushrooms","Garlic","Ginger"],
+    difficulty: "Medium", cookTime: "30 min",
+    recipe: [
+      "Simmer mushrooms, garlic, and ginger in broth for 15 min.",
+      "Whisk in miso paste and soy sauce, adjust seasoning.",
+      "Cook ramen noodles per package, drain and place in bowls.",
+      "Ladle hot broth over noodles.",
+      "Top with halved soft-boiled egg, nori, green onion, and a drizzle of sesame oil."
+    ]
+  },
+  // HEALTHY ──────────────────────────────────────────────────────────────────
+  {
+    name: "Buddha Bowl", emoji: "🥗", mood: ["healthy"], diet: ["any","vegetarian","vegan","glutenfree"],
+    budget: ["$","$$"], time: [30],
+    desc: "Rainbow of roasted veggies, grains, and creamy tahini dressing. Feels like winning.",
+    ingredients: ["Brown rice","Chickpeas","Roasted sweet potato","Cucumber","Avocado","Cherry tomatoes","Tahini","Lemon","Garlic","Olive oil"],
+    difficulty: "Easy", cookTime: "30 min",
+    recipe: [
+      "Cook brown rice per package. Roast cubed sweet potato at 425°F for 20 min.",
+      "Drain and rinse chickpeas, toss with olive oil and spices, roast 20 min.",
+      "Whisk together tahini, lemon juice, garlic, and water for dressing.",
+      "Slice cucumber, halve tomatoes, slice avocado.",
+      "Assemble bowl with rice base, all toppings arranged, drizzle with dressing."
+    ]
+  },
+  {
+    name: "Salmon & Veggies", emoji: "🐟", mood: ["healthy","fancy"], diet: ["any","glutenfree","keto"],
+    budget: ["$$","$$$"], time: [30],
+    desc: "Perfectly seared salmon with crispy skin, served with garlicky roasted vegetables.",
+    ingredients: ["Salmon fillet","Asparagus","Cherry tomatoes","Lemon","Garlic","Olive oil","Dill","Salt","Black pepper"],
+    difficulty: "Easy", cookTime: "25 min",
+    recipe: [
+      "Season salmon with salt, pepper, and dill. Toss veggies with olive oil and garlic.",
+      "Roast veggies at 425°F for 15 min.",
+      "Heat oil in skillet until shimmering. Place salmon skin-side up, cook 4 min.",
+      "Flip salmon, add butter and garlic, baste for 3-4 min.",
+      "Plate veggies, top with salmon, squeeze lemon over everything."
+    ]
+  },
+  {
+    name: "Açaí Bowl", emoji: "🫐", mood: ["healthy","quick"], diet: ["any","vegetarian","vegan","glutenfree"],
+    budget: ["$$"], time: [15],
+    desc: "Thick, smoothie-like base loaded with fresh fruit and crunchy granola. Breakfast goals.",
+    ingredients: ["Frozen açaí packets","Banana","Almond milk","Granola","Blueberries","Strawberries","Honey","Chia seeds","Coconut flakes"],
+    difficulty: "Easy", cookTime: "10 min",
+    recipe: [
+      "Blend frozen açaí with half a banana and a splash of almond milk until thick.",
+      "Pour into a bowl — it should be thick enough to eat with a spoon.",
+      "Top with sliced strawberries, blueberries, and sliced banana.",
+      "Add a generous scoop of granola.",
+      "Drizzle with honey, sprinkle chia seeds and coconut flakes."
+    ]
+  },
+  {
+    name: "Greek Salad with Chicken", emoji: "🫒", mood: ["healthy"], diet: ["any","glutenfree"],
+    budget: ["$","$$"], time: [15,30],
+    desc: "Juicy grilled chicken over crisp veggies, feta, olives, and tangy dressing.",
+    ingredients: ["Chicken breast","Cucumber","Tomatoes","Red onion","Kalamata olives","Feta cheese","Olive oil","Lemon","Oregano","Salt"],
+    difficulty: "Easy", cookTime: "20 min",
+    recipe: [
+      "Season chicken with oregano, salt, pepper, and olive oil.",
+      "Grill or pan-sear chicken 6-7 min per side until cooked through. Rest 5 min, slice.",
+      "Chop cucumber, tomatoes, and red onion into chunks.",
+      "Toss veggies with olives, feta, olive oil, and lemon juice.",
+      "Plate salad, top with sliced chicken, garnish with extra feta and oregano."
+    ]
+  },
+  // QUICK ───────────────────────────────────────────────────────────────────
+  {
+    name: "Avocado Toast", emoji: "🥑", mood: ["quick","healthy"], diet: ["any","vegetarian","vegan"],
+    budget: ["$"], time: [15],
+    desc: "Creamy smashed avo on crispy toast. The millennial classic that slaps every time.",
+    ingredients: ["Sourdough bread","Avocado","Lemon","Red pepper flakes","Salt","Everything bagel seasoning","Optional: poached egg"],
+    difficulty: "Easy", cookTime: "10 min",
+    recipe: [
+      "Toast bread until golden and sturdy.",
+      "Halve avocado, remove pit, scoop into bowl.",
+      "Mash with lemon juice, salt, and a pinch of red pepper flakes.",
+      "Spread generously on toast.",
+      "Top with everything bagel seasoning. Add a poached egg if you're feeling fancy."
+    ]
+  },
+  {
+    name: "Fried Rice", emoji: "🍚", mood: ["quick","comfort"], diet: ["any","vegetarian","vegan"],
+    budget: ["$"], time: [15,30],
+    desc: "Leftover rice transformed into something glorious in under 15 minutes.",
+    ingredients: ["Day-old rice","Eggs","Soy sauce","Sesame oil","Green onions","Garlic","Frozen peas & carrots","Vegetable oil","White pepper"],
+    difficulty: "Easy", cookTime: "15 min",
+    recipe: [
+      "Heat oil in a wok or large skillet until smoking hot.",
+      "Add garlic, stir 30 seconds. Add frozen vegetables, cook 2 min.",
+      "Push to side, scramble eggs in the pan, break into pieces.",
+      "Add cold rice, breaking up clumps, stir-fry everything together.",
+      "Drizzle soy sauce and sesame oil, toss, garnish with green onions."
+    ]
+  },
+  {
+    name: "Quesadilla", emoji: "🫓", mood: ["quick","comfort"], diet: ["any","vegetarian"],
+    budget: ["$"], time: [15],
+    desc: "Crispy tortilla stuffed with melted cheese and whatever's in your fridge.",
+    ingredients: ["Flour tortillas","Shredded cheese","Black beans","Bell pepper","Onion","Sour cream","Salsa","Avocado"],
+    difficulty: "Easy", cookTime: "10 min",
+    recipe: [
+      "Heat a pan over medium-high heat. Lay tortilla flat.",
+      "Sprinkle cheese on half, add beans and peppers.",
+      "Fold tortilla in half. Cook 2-3 min until golden on bottom.",
+      "Flip carefully, cook 2 more min until cheese is melted.",
+      "Cut into wedges, serve with sour cream, salsa, and guacamole."
+    ]
+  },
+  {
+    name: "Stir-Fry Noodles", emoji: "🥡", mood: ["quick","adventurous"], diet: ["any","vegetarian","vegan"],
+    budget: ["$","$$"], time: [15,30],
+    desc: "Slurpy noodles coated in savory sauce with crisp vegetables. Better than takeout.",
+    ingredients: ["Lo mein noodles","Broccoli","Bell peppers","Snap peas","Garlic","Soy sauce","Oyster sauce","Sesame oil","Cornstarch"],
+    difficulty: "Easy", cookTime: "20 min",
+    recipe: [
+      "Cook noodles per package, drain, toss with a little sesame oil.",
+      "Mix sauce: soy sauce, oyster sauce, garlic, sesame oil, cornstarch + water.",
+      "Stir-fry vegetables in very hot oil for 3-4 min, keep crisp.",
+      "Add noodles and sauce, toss everything together over high heat.",
+      "Serve immediately topped with sesame seeds and green onion."
+    ]
+  },
+  // FANCY ───────────────────────────────────────────────────────────────────
+  {
+    name: "Pasta Carbonara", emoji: "🍝", mood: ["fancy","comfort"], diet: ["any"],
+    budget: ["$$"], time: [30],
+    desc: "Silky egg-and-cheese sauce, crispy guanciale, black pepper. Roman perfection.",
+    ingredients: ["Spaghetti","Guanciale or pancetta","Eggs","Pecorino Romano","Parmesan","Black pepper","Pasta water","Salt"],
+    difficulty: "Medium", cookTime: "25 min",
+    recipe: [
+      "Cook pasta in very salty water. Reserve 1 cup of pasta water before draining.",
+      "Render guanciale in a cold pan until crispy, remove from heat.",
+      "Whisk eggs with finely grated Pecorino and Parmesan, season with black pepper.",
+      "Add drained pasta to pan off heat. Add egg mixture, toss vigorously.",
+      "Add pasta water a splash at a time until sauce is silky. Serve immediately."
+    ]
+  },
+  {
+    name: "Beef Tenderloin", emoji: "🥩", mood: ["fancy"], diet: ["any","keto","glutenfree"],
+    budget: ["$$$"], time: [60],
+    desc: "Perfectly seared beef tenderloin with red wine reduction. Restaurant quality at home.",
+    ingredients: ["Beef tenderloin","Butter","Garlic","Thyme","Rosemary","Red wine","Beef stock","Shallots","Salt","Black pepper"],
+    difficulty: "Hard", cookTime: "45 min",
+    recipe: [
+      "Bring beef to room temp. Season generously with salt and pepper.",
+      "Sear in an oven-safe skillet with oil on all sides until deeply browned.",
+      "Add butter, garlic, and herbs; baste continuously for 2 min.",
+      "Roast in 400°F oven to desired doneness (130°F for medium-rare).",
+      "Rest 10 min. Deglaze pan with red wine and stock for sauce. Slice and serve."
+    ]
+  },
+  {
+    name: "Lobster Bisque", emoji: "🦞", mood: ["fancy"], diet: ["any"],
+    budget: ["$$$"], time: [60],
+    desc: "Rich, velvety, deeply flavored bisque. Special occasion in a bowl.",
+    ingredients: ["Lobster tails","Butter","Shallots","Garlic","Tomato paste","Brandy","Heavy cream","Fish stock","Tarragon","Cayenne"],
+    difficulty: "Hard", cookTime: "60 min",
+    recipe: [
+      "Sauté shallots and garlic in butter until soft. Add tomato paste, cook 2 min.",
+      "Add brandy carefully, flambé or cook off the alcohol.",
+      "Pour in fish stock, add lobster shells if available, simmer 20 min.",
+      "Strain, return to pot, add heavy cream and tarragon, simmer until thick.",
+      "Add cooked lobster meat, season with cayenne, salt, and a squeeze of lemon."
+    ]
+  },
+  // ADVENTUROUS ─────────────────────────────────────────────────────────────
+  {
+    name: "Korean Bibimbap", emoji: "🍱", mood: ["adventurous"], diet: ["any","vegetarian","vegan"],
+    budget: ["$$"], time: [30,60],
+    desc: "Mixed rice bowl with colorful namul vegetables, crispy egg, and fiery gochujang.",
+    ingredients: ["White rice","Spinach","Bean sprouts","Carrots","Zucchini","Sesame oil","Soy sauce","Gochujang","Egg","Sesame seeds","Garlic"],
+    difficulty: "Medium", cookTime: "40 min",
+    recipe: [
+      "Cook rice. Separately blanch and sauté each vegetable with garlic and sesame oil.",
+      "Season each vegetable with soy sauce and sesame oil.",
+      "Fry an egg sunny-side-up in a little sesame oil.",
+      "Arrange rice in bowl, place vegetables in sections around it.",
+      "Top with egg, drizzle gochujang sauce, sprinkle sesame seeds. Mix it all together to eat."
+    ]
+  },
+  {
+    name: "Shakshuka", emoji: "🍳", mood: ["adventurous","comfort"], diet: ["any","vegetarian","vegan","glutenfree"],
+    budget: ["$"], time: [30],
+    desc: "Eggs poached in spiced tomato sauce. Bold, fragrant, and ready in one pan.",
+    ingredients: ["Eggs","Crushed tomatoes","Bell peppers","Onion","Garlic","Cumin","Paprika","Cayenne","Feta","Cilantro","Crusty bread"],
+    difficulty: "Easy", cookTime: "25 min",
+    recipe: [
+      "Sauté onion and peppers in olive oil until soft. Add garlic, cook 1 min.",
+      "Add cumin, paprika, and cayenne, stir until fragrant.",
+      "Pour in crushed tomatoes, simmer 10 min, season with salt.",
+      "Create wells in sauce with a spoon, crack an egg into each well.",
+      "Cover and cook 5-7 min until whites are set but yolks are still runny. Top with feta and cilantro."
+    ]
+  },
+  {
+    name: "Thai Green Curry", emoji: "🥘", mood: ["adventurous"], diet: ["any","vegan","vegetarian","glutenfree"],
+    budget: ["$$"], time: [30],
+    desc: "Fragrant coconut curry with Thai basil, lime, and vegetables. Incredible depth of flavor.",
+    ingredients: ["Green curry paste","Coconut milk","Chicken or tofu","Zucchini","Bell peppers","Bamboo shoots","Thai basil","Fish sauce","Brown sugar","Lime","Jasmine rice"],
+    difficulty: "Easy", cookTime: "25 min",
+    recipe: [
+      "Fry green curry paste in a dry pan for 1 min until fragrant.",
+      "Add thick coconut milk, stir to combine with paste.",
+      "Add protein (chicken or tofu), cook until done.",
+      "Add vegetables and remaining coconut milk, simmer 5-7 min.",
+      "Season with fish sauce, sugar, and lime juice. Serve over jasmine rice with Thai basil."
+    ]
+  },
+  {
+    name: "Tacos al Pastor", emoji: "🌮", mood: ["adventurous"], diet: ["any"],
+    budget: ["$","$$"], time: [30,60],
+    desc: "Marinated pork with pineapple, cilantro, onion, and salsa on warm corn tortillas.",
+    ingredients: ["Pork shoulder","Chili peppers","Achiote paste","Pineapple","Garlic","Orange juice","Corn tortillas","Cilantro","White onion","Lime","Salsa verde"],
+    difficulty: "Medium", cookTime: "45 min",
+    recipe: [
+      "Blend chili peppers, achiote, garlic, and orange juice into marinade.",
+      "Marinate thinly sliced pork at least 30 min (ideally overnight).",
+      "Cook pork in a hot cast iron skillet until charred at edges.",
+      "Warm corn tortillas directly over a gas flame or in a dry pan.",
+      "Build tacos: pork, chopped pineapple, onion, cilantro, squeeze of lime, and salsa."
+    ]
+  },
+  // KETO ─────────────────────────────────────────────────────────────────────
+  {
+    name: "Keto Bacon Egg Bites", emoji: "🥚", mood: ["quick","healthy"], diet: ["keto","glutenfree"],
+    budget: ["$"], time: [15,30],
+    desc: "Protein-packed egg bites loaded with bacon and cheese. Low-carb, high satisfaction.",
+    ingredients: ["Eggs","Bacon","Cheddar cheese","Heavy cream","Chives","Salt","Black pepper","Butter"],
+    difficulty: "Easy", cookTime: "20 min",
+    recipe: [
+      "Preheat oven to 350°F. Butter a muffin tin.",
+      "Cook bacon until crispy, crumble.",
+      "Whisk eggs with heavy cream, salt, and pepper.",
+      "Divide bacon and cheese among muffin cups, pour egg mixture over.",
+      "Bake 18-20 min until set. Top with chives and serve."
+    ]
+  },
+  {
+    name: "Zucchini Noodles with Pesto", emoji: "🥒", mood: ["healthy","quick"], diet: ["keto","glutenfree","vegetarian"],
+    budget: ["$","$$"], time: [15],
+    desc: "Spiralized zucchini with vibrant basil pesto. Light, fresh, and actually filling.",
+    ingredients: ["Zucchini","Fresh basil","Pine nuts","Parmesan","Garlic","Olive oil","Lemon","Cherry tomatoes","Salt","Black pepper"],
+    difficulty: "Easy", cookTime: "10 min",
+    recipe: [
+      "Spiralize zucchini into noodles or use a peeler for ribbons.",
+      "Blend basil, pine nuts, Parmesan, garlic, lemon juice, and olive oil into pesto.",
+      "Lightly sauté zucchini noodles 1-2 min — don't overcook, they should be tender-crisp.",
+      "Toss with pesto.",
+      "Top with halved cherry tomatoes, extra Parmesan, and a crack of black pepper."
+    ]
+  },
+  // VEGAN ────────────────────────────────────────────────────────────────────
+  {
+    name: "Mushroom Tacos", emoji: "🌮", mood: ["adventurous","comfort"], diet: ["vegan","vegetarian","glutenfree"],
+    budget: ["$","$$"], time: [30],
+    desc: "Meaty, smoky mushrooms with chipotle seasoning. Fooled many a meat-eater.",
+    ingredients: ["Portobello mushrooms","Chipotle peppers","Smoked paprika","Cumin","Corn tortillas","Avocado","Lime","Red cabbage","Cilantro","Pickled red onion"],
+    difficulty: "Easy", cookTime: "20 min",
+    recipe: [
+      "Slice mushrooms into strips, toss with chipotle, paprika, cumin, and olive oil.",
+      "Cook in a hot skillet until browned and slightly crispy, 8-10 min.",
+      "Warm corn tortillas in a dry pan.",
+      "Mash avocado with lime and salt.",
+      "Build tacos: mushrooms, smashed avocado, shredded red cabbage, pickled onion, cilantro, lime."
+    ]
+  },
+  {
+    name: "Lentil Dal", emoji: "🫘", mood: ["comfort","healthy"], diet: ["vegan","vegetarian","glutenfree"],
+    budget: ["$"], time: [30,60],
+    desc: "Warming, deeply spiced red lentil dal. Cheap, filling, and impossibly cozy.",
+    ingredients: ["Red lentils","Onion","Garlic","Ginger","Crushed tomatoes","Coconut milk","Cumin","Turmeric","Garam masala","Spinach","Basmati rice","Cilantro"],
+    difficulty: "Easy", cookTime: "35 min",
+    recipe: [
+      "Sauté onion until golden, add garlic and ginger, cook 2 min.",
+      "Add spices (cumin, turmeric, garam masala), stir 1 min until fragrant.",
+      "Add lentils, crushed tomatoes, and 2 cups water. Simmer 20 min until lentils break down.",
+      "Stir in coconut milk and spinach, cook 5 more min.",
+      "Serve over basmati rice topped with fresh cilantro and a squeeze of lemon."
+    ]
+  }
+];
+
+// ── Scoring & filter logic ────────────────────────────────────────────────────
+let lastMealIndex = -1;
+
+function pickMeal() {
+  const mood   = getChip('mood-chips');
+  const diet   = getChip('diet-chips');
+  const budget = getChip('budget-chips');
+  const time   = +getChip('time-chips');
+
+  // Score each meal
+  let candidates = MEALS.map((meal, i) => {
+    let score = 0;
+    if (meal.mood.includes(mood))       score += 30;
+    if (meal.diet.includes(diet) || diet === 'any') score += 25;
+    if (meal.budget.includes(budget))   score += 25;
+    if (meal.time.includes(time))       score += 20;
+    return { meal, score, i };
+  });
+
+  // Filter to at least some score, avoid repeating last
+  candidates.sort((a, b) => b.score - a.score);
+  const topScore = candidates[0].score;
+  const pool = candidates.filter(c => c.score >= topScore - 20 && c.i !== lastMealIndex);
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+  lastMealIndex = pick.i;
+  renderMeal(pick.meal);
+}
+
+function renderMeal(meal) {
+  const budgetMap   = {'$':'Budget-friendly','$$':'Mid-range','$$$':'Splurge'};
+  const budgetLabel = meal.budget.map(b => budgetMap[b] || b).join(' / ');
+
+  document.getElementById('meal-result').innerHTML = `
+    <div class="meal-card">
+      <div class="meal-hero">
+        <div class="meal-emoji-big">${meal.emoji}</div>
+        <div class="meal-name">${meal.name}</div>
+        <div class="meal-description">${meal.desc}</div>
+        <div class="meal-badges">
+          <span class="badge badge-purple">⏱ ${meal.cookTime}</span>
+          <span class="badge" style="background:rgba(0,212,170,0.15);color:var(--accent2)">🎯 ${meal.difficulty}</span>
+          <span class="badge" style="background:rgba(255,170,0,0.15);color:#ffaa00">💰 ${budgetLabel}</span>
+        </div>
+      </div>
+      <div class="meal-body">
+        <div class="meal-section-title">Ingredients</div>
+        <div class="ingredients-list">
+          ${meal.ingredients.map(ing => `<span class="ingredient-tag">${ing}</span>`).join('')}
+        </div>
+
+        <div class="meal-section-title">Recipe</div>
+        <ol class="recipe-steps">
+          ${meal.recipe.map((step, i) => `
+            <li class="recipe-step">
+              <span class="step-num">${i+1}</span>
+              <span class="step-text">${step}</span>
+            </li>
+          `).join('')}
+        </ol>
+
+        <div class="meal-actions">
+          <button class="btn btn-teal" onclick="pickMeal()">Not feeling it? Try another 🎲</button>
+          <button class="btn btn-secondary" onclick="shareMeal('${meal.name}')">Share this meal</button>
+        </div>
+
+        <div class="affiliate-box">
+          <strong>🛒 Get the ingredients delivered</strong>
+          Sponsored · Affiliate links go here
+          <div>
+            <a href="#" class="affiliate-btn">🛍️ Order on Instacart · affiliate link</a>
+            <a href="#" class="affiliate-btn" style="margin-left:8px">📦 Amazon Fresh · affiliate link</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function shareMeal(name) {
+  const text = `I just used VibeCheck to find my next meal: ${name} 🍽️\n\nFind yours →`;
+  if (navigator.share) {
+    navigator.share({ title: 'What Should I Eat?', text, url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(text + ' ' + window.location.href)
+      .then(() => showToast('Copied to clipboard! 📋'));
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// Auto-pick on load
+pickMeal();
+</script>
+
+</body>
+</html>
