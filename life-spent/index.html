@@ -3,9 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Life Spent On… — Time Reality Check</title>
-  <meta name="description" content="How much of your life have you spent doom-scrolling? Enter your age and daily habits. The results will haunt you.">
+  <title>Life Spent On… — Time & Life Calculator That Will Haunt You</title>
+  <meta name="description" content="How many years have you spent sleeping, scrolling, or commuting? Enter your age & daily habits. This free life calculator will haunt you with the results.">
+  <meta property="og:title" content="Life Spent On… — Free Life Time Calculator">
+  <meta property="og:description" content="How many years of your life have you spent doom-scrolling? Enter your age & daily habits. The results will haunt you.">
+  <meta property="og:image" content="https://vibecheck.tools/og-life-spent.png">
+  <meta property="og:url" content="https://vibecheck.tools/life-spent/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Life Spent On… — Free Life Time Calculator">
+  <meta name="twitter:description" content="How many years of your life have you spent doom-scrolling? Enter your age & daily habits. The results will haunt you.">
+  <link rel="canonical" href="https://vibecheck.tools/life-spent/">
   <link rel="stylesheet" href="../style.css">
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Life Spent On…",
+      "description": "A free life time calculator that shows how many years of your life you've spent on activities like sleeping, scrolling social media, commuting, and watching TV — based on your age and daily habits.",
+      "url": "https://vibecheck.tools/life-spent/",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "featureList": ["Life time breakdown in years", "10+ trackable daily activities", "Comparison to average lifespans", "Shareable results with link"],
+      "provider": { "@type": "Organization", "name": "VibeCheck", "url": "https://vibecheck.tools" }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://vibecheck.tools/" },
+        { "@type": "ListItem", "position": 2, "name": "Life Spent On…", "item": "https://vibecheck.tools/life-spent/" }
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How is time spent calculated?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Enter your current age and how many hours per day you spend on each activity. The calculator multiplies your daily hours by the number of days you've been alive (since age 5) to give you a total in years, months, and days." }
+        },
+        {
+          "@type": "Question",
+          "name": "Is this life calculator accurate?",
+          "acceptedAnswer": { "@type": "Answer", "text": "The calculations are mathematically accurate based on the inputs you provide. Averages are used as defaults (e.g., 7–8 hours of sleep per night). The results are meant to be eye-opening and reflective, not a precise scientific study." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I share my results?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes! Use the Share button to post your results to Twitter/X, Reddit, or WhatsApp. You can also copy a direct link — the link encodes your exact inputs so anyone who opens it sees your specific results." }
+        }
+      ]
+    }
+  ]
+  </script>
   <style>
     .tool-layout {
       display: grid;
@@ -207,7 +261,7 @@
 </nav>
 
 <div class="page-hero">
-  <h1>Life Spent On… ⏳</h1>
+  <h1>Life Spent On… — Free Time & Life Calculator ⏳</h1>
   <p>How much of your existence have you traded for Netflix and TikTok? Let's find out.</p>
 </div>
 
@@ -279,6 +333,18 @@
 </div>
 
 <div id="toast" class="toast"></div>
+
+<article class="about-tool" style="max-width:1000px;margin:0 auto 48px;padding:0 24px;">
+  <section style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px 32px;">
+    <h2 style="font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">About Life Spent On…</h2>
+    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;margin-bottom:10px;">
+      <strong style="color:var(--text);">Life Spent On…</strong> is a free life time calculator that converts your daily habits into something visceral: years of your life. Enter your age and how many hours per day you spend on activities like sleeping, scrolling social media, commuting, watching TV, or eating — and the tool converts those hours into total years spent since you were 5 years old.
+    </p>
+    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;">
+      <strong style="color:var(--text);">How it works:</strong> For each activity, your daily hours are multiplied by your total days lived (from age 5 to now). The results are displayed as years, months, and days — ranked from biggest time-sink to smallest. The tool also provides context comparisons to make the numbers hit harder. Everything runs in your browser privately, and you can share your exact results via a unique link that encodes your inputs.
+    </p>
+  </section>
+</article>
 
 <footer class="footer">
   <div class="container">
@@ -471,6 +537,8 @@ function calculate() {
       </div>
       <div class="share-actions">
         <button class="btn btn-primary" onclick="shareTwitter()">𝕏 Share my life stats</button>
+        <button class="btn btn-ghost" onclick="shareReddit()">Reddit</button>
+        <button class="btn btn-ghost" onclick="shareWhatsApp()">WhatsApp</button>
         <button class="btn btn-ghost" onclick="copyLink()">🔗 Copy link</button>
       </div>
     </div>
@@ -503,6 +571,24 @@ function shareTwitter() {
   const url   = encodeURIComponent(`${window.location.origin}${window.location.pathname}#${hash}`);
   const text  = encodeURIComponent(`I've spent ${total} years on these activities 🤯\n\n${stats}\n\nCheck yours 👇`);
   window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+}
+
+function shareReddit() {
+  const total = window._totalYears || '?';
+  const stats = (window._statsForShare || []).slice(0, 2).join(' · ');
+  const hash  = getHashData();
+  const url   = encodeURIComponent(`${window.location.origin}${window.location.pathname}#${hash}`);
+  const title = encodeURIComponent(`I've spent ${total} years of my life on these activities 🤯 — Life Spent Calculator`);
+  window.open(`https://www.reddit.com/submit?url=${url}&title=${title}`, '_blank');
+}
+
+function shareWhatsApp() {
+  const total = window._totalYears || '?';
+  const stats = (window._statsForShare || []).slice(0, 3).join('\n');
+  const hash  = getHashData();
+  const url   = `${window.location.origin}${window.location.pathname}#${hash}`;
+  const text  = encodeURIComponent(`I've spent ${total} years of my life on these activities 🤯\n\n${stats}\n\nCheck yours 👇\n${url}`);
+  window.open(`https://wa.me/?text=${text}`, '_blank');
 }
 
 function copyLink() {

@@ -3,9 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Pickup Line Generator — VibeCheck</title>
-  <meta name="description" content="Generate pickup lines by category or enter a name. Rate them, share them, cringe at them.">
+  <title>AI Pickup Line Generator — Free & Personalized Lines</title>
+  <meta name="description" content="Generate funny & clever pickup lines by category or personalize with a name. Rate them, share them, cringe at them. 100+ lines, totally free.">
+  <meta property="og:title" content="AI Pickup Line Generator — Free & Personalized">
+  <meta property="og:description" content="Generate funny & clever pickup lines by category or enter a name for personalized lines. Rate, share, and cringe. 100% free.">
+  <meta property="og:image" content="https://vibecheck.tools/og-pickup-lines.png">
+  <meta property="og:url" content="https://vibecheck.tools/pickup-lines/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AI Pickup Line Generator — Free & Personalized">
+  <meta name="twitter:description" content="Generate funny pickup lines by category or personalize with a name. Rate, share, cringe. 100% free.">
+  <link rel="canonical" href="https://vibecheck.tools/pickup-lines/">
   <link rel="stylesheet" href="../style.css">
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "AI Pickup Line Generator",
+      "description": "A free AI-curated pickup line generator with 100+ lines across categories including cheesy, nerdy, dark humor, romantic, and more. Personalize lines with any name or topic.",
+      "url": "https://vibecheck.tools/pickup-lines/",
+      "applicationCategory": "EntertainmentApplication",
+      "operatingSystem": "Any",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "featureList": ["100+ pickup lines", "Multiple categories (cheesy, nerdy, dark humor, romantic)", "Personalize with a name or topic", "Rate lines 🔥 or 💀", "Share on social media"],
+      "provider": { "@type": "Organization", "name": "VibeCheck", "url": "https://vibecheck.tools" }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://vibecheck.tools/" },
+        { "@type": "ListItem", "position": 2, "name": "AI Pickup Line Generator", "item": "https://vibecheck.tools/pickup-lines/" }
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Are these pickup lines AI generated?",
+          "acceptedAnswer": { "@type": "Answer", "text": "The lines are AI-curated — written and refined with AI assistance to be funny, clever, and cringe-worthy in just the right way. They're organized by category and run entirely in your browser, with no live AI API calls." }
+        },
+        {
+          "@type": "Question",
+          "name": "How many pickup lines are there?",
+          "acceptedAnswer": { "@type": "Answer", "text": "There are 100+ pickup lines across multiple categories including cheesy classics, nerdy references, dark humor, romantic lines, and more. New lines are added regularly." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I personalize pickup lines with a name?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes! Enter any name or topic in the personalize field and the generator will inject it into lines that support customization, making the result feel tailor-made." }
+        }
+      ]
+    }
+  ]
+  </script>
   <style>
     .picker-layout {
       max-width: 680px;
@@ -180,7 +234,7 @@
 </nav>
 
 <div class="page-hero">
-  <h1>Pickup Line Generator 💘</h1>
+  <h1>AI Pickup Line Generator — Free & Personalized 💘</h1>
   <p>200+ lines. Seven categories. Zero shame. Rate, share, and cringe freely.</p>
 </div>
 
@@ -220,6 +274,18 @@
 </div>
 
 <div id="toast" class="toast"></div>
+
+<article class="about-tool" style="max-width:680px;margin:0 auto 48px;padding:0 24px;">
+  <section style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px 32px;">
+    <h2 style="font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">About the AI Pickup Line Generator</h2>
+    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;margin-bottom:10px;">
+      <strong style="color:var(--text);">The AI Pickup Line Generator</strong> is a free tool with 100+ pickup lines across categories like cheesy classics, nerdy references, dark humor, and romantic lines. Each line is AI-curated to hit the right balance of clever, funny, and cringeworthy. Rate lines as fire 🔥 or a complete disaster 💀 — and share your favorites on social media.
+    </p>
+    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;">
+      <strong style="color:var(--text);">How it works:</strong> Choose a category from the dropdown, then optionally enter a name or topic for personalized lines. Hit generate and a random line from your chosen category is displayed. Lines that support customization will automatically include your name or topic. Everything runs entirely in your browser — no AI API calls, no data stored. Use responsibly. We take no responsibility for outcomes.
+    </p>
+  </section>
+</article>
 
 <footer class="footer">
   <div class="container">
@@ -497,6 +563,8 @@ function renderLine(text, cat) {
           <button class="btn btn-primary" onclick="generateLine()">Generate another 🎲</button>
           <button class="btn btn-secondary" onclick="copyLine()">📋 Copy line</button>
           <button class="btn btn-ghost" onclick="shareTwitter()">𝕏 Share</button>
+          <button class="btn btn-ghost" onclick="shareReddit()">Reddit</button>
+          <button class="btn btn-ghost" onclick="shareWhatsApp()">WhatsApp</button>
         </div>
       </div>
     </div>
@@ -538,6 +606,19 @@ function shareTwitter() {
   const text = encodeURIComponent(`"${currentLine.text}" 💘\n\nGenerate your own pickup lines →`);
   const url  = encodeURIComponent(window.location.href);
   window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+}
+
+function shareReddit() {
+  if (!currentLine) return;
+  const title = encodeURIComponent(`"${currentLine.text}" — AI Pickup Line Generator`);
+  const url   = encodeURIComponent(window.location.href);
+  window.open(`https://www.reddit.com/submit?url=${url}&title=${title}`, '_blank');
+}
+
+function shareWhatsApp() {
+  if (!currentLine) return;
+  const text = encodeURIComponent(`"${currentLine.text}" 💘\n\nGenerate your own pickup lines 👇\n${window.location.href}`);
+  window.open(`https://wa.me/?text=${text}`, '_blank');
 }
 
 function renderHistory() {

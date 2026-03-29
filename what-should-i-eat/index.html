@@ -3,9 +3,68 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>What Should I Eat? — Meal Picker</title>
-  <meta name="description" content="Can't decide what to eat? Pick your mood, diet, budget, and time. We'll serve up the perfect meal with a full recipe.">
+  <title>What Should I Eat? — Free Meal Picker & Recipe Finder</title>
+  <meta name="description" content="Can't decide what to eat? Pick your mood, diet, budget & time. Get a perfect meal suggestion with a full recipe instantly. Free, no sign-up.">
+  <meta property="og:title" content="What Should I Eat? — Free Meal Picker & Recipe Finder">
+  <meta property="og:description" content="Pick your mood, diet, budget & time — we'll serve up the perfect meal with a full recipe. 100% free, no sign-up.">
+  <meta property="og:image" content="https://vibecheck.tools/og-what-should-i-eat.png">
+  <meta property="og:url" content="https://vibecheck.tools/what-should-i-eat/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="What Should I Eat? — Free Meal Picker & Recipe Finder">
+  <meta name="twitter:description" content="Pick your mood, diet, budget & time — we'll serve up the perfect meal with a full recipe. 100% free.">
+  <link rel="canonical" href="https://vibecheck.tools/what-should-i-eat/">
   <link rel="stylesheet" href="../style.css">
+  <script type="application/ld+json">
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "What Should I Eat?",
+      "description": "A free meal picker tool that suggests the perfect meal based on your mood, dietary preferences, budget, and available time — complete with a full recipe.",
+      "url": "https://vibecheck.tools/what-should-i-eat/",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "featureList": ["Meal suggestions by mood", "Dietary filter (vegan, keto, etc.)", "Budget filter", "Cook time filter", "Full recipe included"],
+      "provider": { "@type": "Organization", "name": "VibeCheck", "url": "https://vibecheck.tools" }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://vibecheck.tools/" },
+        { "@type": "ListItem", "position": 2, "name": "What Should I Eat?", "item": "https://vibecheck.tools/what-should-i-eat/" }
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does the meal picker work?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Select your mood, dietary preference, budget, and how much time you have to cook. The tool instantly suggests a matching meal from a curated database of recipes, complete with ingredients and step-by-step instructions." }
+        },
+        {
+          "@type": "Question",
+          "name": "Is this meal planner free?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes, What Should I Eat? is completely free to use. No account required, no email, no payment. It runs entirely in your browser." }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I filter by dietary restrictions?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. You can filter meals by diet type including anything goes, vegetarian, vegan, and keto. More dietary options are planned." }
+        },
+        {
+          "@type": "Question",
+          "name": "How many meal options are there?",
+          "acceptedAnswer": { "@type": "Answer", "text": "The tool includes dozens of curated meal options across multiple moods, budgets, cook times, and dietary preferences, with more being added regularly." }
+        }
+      ]
+    }
+  ]
+  </script>
   <style>
     .picker-layout {
       max-width: 700px;
@@ -189,8 +248,8 @@
 </nav>
 
 <div class="page-hero">
-  <h1>What Should I Eat? 🍜</h1>
-  <p>Stop staring at the fridge. Tell us your vibe and we'll pick your meal.</p>
+  <h1>What Should I Eat? — Free Meal Picker 🍜</h1>
+  <p>Stop staring at the fridge. Pick your mood, diet &amp; budget — get the perfect meal with a full recipe.</p>
 </div>
 
 <div class="picker-layout">
@@ -242,6 +301,18 @@
 </div>
 
 <div id="toast" class="toast"></div>
+
+<article class="about-tool" style="max-width:700px;margin:0 auto 48px;padding:0 24px;">
+  <section style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px 32px;">
+    <h2 style="font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">About What Should I Eat?</h2>
+    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;margin-bottom:10px;">
+      <strong style="color:var(--text);">What Should I Eat?</strong> is a free meal picker tool designed to end the daily "what's for dinner?" debate in seconds. Tell it your current mood, dietary preferences (vegan, keto, gluten-free, etc.), how much you want to spend, and how much time you have to cook — and it serves up a perfectly matched meal suggestion complete with a full ingredient list and step-by-step recipe.
+    </p>
+    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;">
+      <strong style="color:var(--text);">How it works:</strong> The tool matches your inputs against a curated database of meals spanning every mood and diet. All logic runs in your browser — no server, no account, no data collected. Hit "Try another" as many times as you want until something sounds right. Whether you're meal planning for the week or just hungry right now, What Should I Eat? gets you from indecision to dinner in under 10 seconds.
+    </p>
+  </section>
+</article>
 
 <footer class="footer">
   <div class="container">
@@ -659,7 +730,9 @@ function renderMeal(meal) {
 
         <div class="meal-actions">
           <button class="btn btn-teal" onclick="pickMeal()">Not feeling it? Try another 🎲</button>
-          <button class="btn btn-secondary" onclick="shareMeal('${meal.name}')">Share this meal</button>
+          <button class="btn btn-secondary" onclick="shareMealTwitter('${meal.name}')">𝕏 Share</button>
+          <button class="btn btn-ghost" onclick="shareMealReddit('${meal.name}')">Reddit</button>
+          <button class="btn btn-ghost" onclick="shareMealWhatsApp('${meal.name}')">WhatsApp</button>
         </div>
 
         <div class="affiliate-box">
@@ -675,14 +748,21 @@ function renderMeal(meal) {
   `;
 }
 
-function shareMeal(name) {
-  const text = `I just used VibeCheck to find my next meal: ${name} 🍽️\n\nFind yours →`;
-  if (navigator.share) {
-    navigator.share({ title: 'What Should I Eat?', text, url: window.location.href });
-  } else {
-    navigator.clipboard.writeText(text + ' ' + window.location.href)
-      .then(() => showToast('Copied to clipboard! 📋'));
-  }
+function shareMealTwitter(name) {
+  const text = encodeURIComponent(`The meal picker just told me to make ${name} 🍽️\n\nFind yours →`);
+  const url  = encodeURIComponent(window.location.href);
+  window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+}
+
+function shareMealReddit(name) {
+  const title = encodeURIComponent(`The meal picker said I should make ${name} — What Should I Eat?`);
+  const url   = encodeURIComponent(window.location.href);
+  window.open(`https://www.reddit.com/submit?url=${url}&title=${title}`, '_blank');
+}
+
+function shareMealWhatsApp(name) {
+  const text = encodeURIComponent(`The meal picker just told me to make ${name} 🍽️\n\nFind your meal 👇\n${window.location.href}`);
+  window.open(`https://wa.me/?text=${text}`, '_blank');
 }
 
 function showToast(msg) {
