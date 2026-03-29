@@ -66,6 +66,13 @@
   ]
   </script>
   <style>
+    /* Fire theme overrides */
+    :root {
+      --accent: #ff6b35;
+      --accent2: #f7c948;
+      --accent-glow: rgba(255,107,53,0.3);
+    }
+
     .tool-layout {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -79,10 +86,13 @@
     }
 
     .form-panel {
-      background: var(--bg2);
-      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,107,53,0.2);
       border-radius: var(--radius);
       padding: 32px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 0 40px rgba(255,107,53,0.07);
     }
 
     .result-panel {
@@ -95,11 +105,12 @@
     .score-display {
       text-align: center;
       padding: 32px 24px;
-      background: var(--bg2);
-      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,107,53,0.2);
       border-radius: var(--radius);
       position: relative;
       overflow: hidden;
+      backdrop-filter: blur(14px);
     }
     .score-ring {
       width: 140px;
@@ -150,10 +161,11 @@
       gap: 12px;
     }
     .metric {
-      background: var(--bg3);
-      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,107,53,0.15);
       border-radius: var(--radius-sm);
       padding: 16px;
+      backdrop-filter: blur(8px);
     }
     .metric-label {
       font-size: 0.75rem;
@@ -306,20 +318,55 @@
 <div id="toast" class="toast"></div>
 
 <article class="about-tool" style="max-width:960px;margin:0 auto 48px;padding:0 24px;">
-  <section style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px 32px;">
-    <h2 style="font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">About Am I Cooked?</h2>
-    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;margin-bottom:10px;">
+  <section style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,107,53,0.2);border-radius:var(--radius);padding:28px 32px;backdrop-filter:blur(12px);">
+    <h2 style="font-size:0.78rem;font-weight:700;margin-bottom:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;">About Am I Cooked? — Financial Health Check</h2>
+    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.75;margin-bottom:10px;">
       <strong style="color:var(--text);">Am I Cooked?</strong> is a free financial health check tool that gives you an honest, no-nonsense assessment of your personal finances. Enter your age, annual salary, monthly rent, total savings, and total debt — and the tool calculates a financial health score from 0 to 100 using standard benchmarks like the 50/30/20 budgeting rule, recommended savings rates by age, and healthy debt-to-income ratios.
     </p>
-    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;">
+    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.75;">
       <strong style="color:var(--text);">How it works:</strong> Your score weighs four factors — rent burden (how much of your income goes to housing), savings rate (what percentage you're putting away monthly), debt load (total debt relative to income), and savings benchmark (how your nest egg compares to recommended targets for your age). The result is a blunt, shareable verdict: from "Financially Thriving" all the way to "Absolutely Cooked." No financial advice, just vibes and math.
     </p>
   </section>
 </article>
 
+<section class="related-tools" aria-labelledby="related-heading-cooked">
+  <h2 id="related-heading-cooked">More free tools you'll love</h2>
+  <div class="related-grid">
+    <a href="../what-should-i-eat/" class="related-card" aria-label="What Should I Eat? meal picker">
+      <span class="r-emoji" role="img" aria-label="Ramen">🍜</span>
+      <span class="r-name">What Should I Eat?</span>
+      <span class="r-desc">Stop staring at the fridge. Get a perfect meal suggestion with a full recipe.</span>
+    </a>
+    <a href="../life-spent/" class="related-card" aria-label="Life Spent On time calculator">
+      <span class="r-emoji" role="img" aria-label="Hourglass">⏳</span>
+      <span class="r-name">Life Spent On…</span>
+      <span class="r-desc">How many years have you spent doom-scrolling? The results will haunt you.</span>
+    </a>
+    <a href="../pickup-lines/" class="related-card" aria-label="AI Pickup Line Generator">
+      <span class="r-emoji" role="img" aria-label="Heart with arrow">💘</span>
+      <span class="r-name">AI Pickup Line Generator</span>
+      <span class="r-desc">Generate funny, cheesy, or romantic pickup lines. Rate them, share them.</span>
+    </a>
+  </div>
+</section>
+
+<section class="popular-searches" aria-label="Popular searches for financial health check">
+  <h3>Popular searches</h3>
+  <div class="search-tags" role="list">
+    <span class="search-tag" role="listitem">am i financially stable</span>
+    <span class="search-tag" role="listitem">financial health check free</span>
+    <span class="search-tag" role="listitem">money score calculator</span>
+    <span class="search-tag" role="listitem">am i cooked financially</span>
+    <span class="search-tag" role="listitem">how to check financial health</span>
+    <span class="search-tag" role="listitem">personal finance score</span>
+    <span class="search-tag" role="listitem">am i broke calculator</span>
+    <span class="search-tag" role="listitem">savings rate checker</span>
+  </div>
+</section>
+
 <footer class="footer">
   <div class="container">
-    <p>© 2024 VibeCheck · <a href="../">← All tools</a></p>
+    <p>© 2025 VibeCheck · <a href="../">← All tools</a></p>
     <p class="mt-8" style="font-size:0.75rem;opacity:0.5">Not financial advice. Just vibes.</p>
   </div>
 </footer>

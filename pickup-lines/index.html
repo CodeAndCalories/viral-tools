@@ -61,6 +61,13 @@
   ]
   </script>
   <style>
+    /* Love pink/magenta theme overrides */
+    :root {
+      --accent: #f472b6;
+      --accent2: #e879f9;
+      --accent-glow: rgba(244,114,182,0.3);
+    }
+
     .picker-layout {
       max-width: 680px;
       margin: 0 auto;
@@ -68,11 +75,14 @@
     }
 
     .controls-card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(244,114,182,0.22);
       border-radius: var(--radius);
       padding: 28px;
       margin-bottom: 24px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 0 40px rgba(244,114,182,0.07);
     }
 
     .name-row {
@@ -86,15 +96,16 @@
 
     /* Line display */
     .line-card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(244,114,182,0.22);
       border-radius: var(--radius);
       overflow: hidden;
-      animation: fadeIn 0.35s ease both;
+      animation: fadeIn 0.5s ease both;
+      backdrop-filter: blur(14px);
     }
 
     .line-hero {
-      background: linear-gradient(135deg, #16112e 0%, #0d1f1a 100%);
+      background: linear-gradient(135deg, rgba(244,114,182,0.12) 0%, rgba(232,121,249,0.1) 100%);
       padding: 40px 32px 32px;
       text-align: center;
       border-bottom: 1px solid var(--border);
@@ -107,7 +118,7 @@
       left: 24px;
       font-size: 6rem;
       line-height: 1;
-      color: rgba(124,106,255,0.15);
+      color: rgba(244,114,182,0.2);
       font-family: Georgia, serif;
       pointer-events: none;
     }
@@ -276,20 +287,55 @@
 <div id="toast" class="toast"></div>
 
 <article class="about-tool" style="max-width:680px;margin:0 auto 48px;padding:0 24px;">
-  <section style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px 32px;">
-    <h2 style="font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">About the AI Pickup Line Generator</h2>
-    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;margin-bottom:10px;">
+  <section style="background:rgba(255,255,255,0.04);border:1px solid rgba(244,114,182,0.2);border-radius:var(--radius);padding:28px 32px;backdrop-filter:blur(12px);">
+    <h2 style="font-size:0.78rem;font-weight:700;margin-bottom:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;">About the AI Pickup Line Generator</h2>
+    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.75;margin-bottom:10px;">
       <strong style="color:var(--text);">The AI Pickup Line Generator</strong> is a free tool with 100+ pickup lines across categories like cheesy classics, nerdy references, dark humor, and romantic lines. Each line is AI-curated to hit the right balance of clever, funny, and cringeworthy. Rate lines as fire 🔥 or a complete disaster 💀 — and share your favorites on social media.
     </p>
-    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;">
+    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.75;">
       <strong style="color:var(--text);">How it works:</strong> Choose a category from the dropdown, then optionally enter a name or topic for personalized lines. Hit generate and a random line from your chosen category is displayed. Lines that support customization will automatically include your name or topic. Everything runs entirely in your browser — no AI API calls, no data stored. Use responsibly. We take no responsibility for outcomes.
     </p>
   </section>
 </article>
 
+<section class="related-tools" aria-labelledby="related-heading-pickup">
+  <h2 id="related-heading-pickup">More free tools you'll love</h2>
+  <div class="related-grid">
+    <a href="../am-i-cooked/" class="related-card" aria-label="Am I Cooked financial health check">
+      <span class="r-emoji" role="img" aria-label="Skull">💀</span>
+      <span class="r-name">Am I Cooked?</span>
+      <span class="r-desc">Get an honest financial reality check score. Are you thriving or cooked?</span>
+    </a>
+    <a href="../what-should-i-eat/" class="related-card" aria-label="What Should I Eat meal picker">
+      <span class="r-emoji" role="img" aria-label="Ramen">🍜</span>
+      <span class="r-name">What Should I Eat?</span>
+      <span class="r-desc">Stop staring at the fridge. Get a perfect meal suggestion with a full recipe.</span>
+    </a>
+    <a href="../life-spent/" class="related-card" aria-label="Life Spent On time calculator">
+      <span class="r-emoji" role="img" aria-label="Hourglass">⏳</span>
+      <span class="r-name">Life Spent On…</span>
+      <span class="r-desc">How many years have you spent doom-scrolling? The results will haunt you.</span>
+    </a>
+  </div>
+</section>
+
+<section class="popular-searches" aria-label="Popular searches for pickup line generator">
+  <h3>Popular searches</h3>
+  <div class="search-tags" role="list">
+    <span class="search-tag" role="listitem">best pickup lines 2026</span>
+    <span class="search-tag" role="listitem">funny pickup lines</span>
+    <span class="search-tag" role="listitem">cheesy pickup lines generator</span>
+    <span class="search-tag" role="listitem">ai pickup line generator free</span>
+    <span class="search-tag" role="listitem">cute pickup lines for her</span>
+    <span class="search-tag" role="listitem">nerdy pickup lines</span>
+    <span class="search-tag" role="listitem">romantic pickup lines</span>
+    <span class="search-tag" role="listitem">corny pickup lines</span>
+  </div>
+</section>
+
 <footer class="footer">
   <div class="container">
-    <p>© 2024 VibeCheck · <a href="../">← All tools</a></p>
+    <p>© 2025 VibeCheck · <a href="../">← All tools</a></p>
     <p class="mt-8" style="font-size:0.75rem;opacity:0.5">Use responsibly. We take no responsibility for outcomes.</p>
   </div>
 </footer>

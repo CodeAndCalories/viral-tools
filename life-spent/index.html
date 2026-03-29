@@ -61,6 +61,13 @@
   ]
   </script>
   <style>
+    /* Cosmic blue/purple theme overrides */
+    :root {
+      --accent: #818cf8;
+      --accent2: #a78bfa;
+      --accent-glow: rgba(129,140,248,0.3);
+    }
+
     .tool-layout {
       display: grid;
       grid-template-columns: 380px 1fr;
@@ -74,13 +81,16 @@
     }
 
     .form-panel {
-      background: var(--bg2);
-      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(129,140,248,0.22);
       border-radius: var(--radius);
       padding: 28px;
       height: fit-content;
       position: sticky;
       top: 80px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 0 40px rgba(129,140,248,0.07);
     }
     @media (max-width: 800px) {
       .form-panel { position: static; }
@@ -104,8 +114,8 @@
     .activity-num {
       width: 80px;
       padding: 8px 12px;
-      background: var(--bg3);
-      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(129,140,248,0.2);
       border-radius: var(--radius-sm);
       color: var(--text);
       font-size: 0.9rem;
@@ -335,20 +345,55 @@
 <div id="toast" class="toast"></div>
 
 <article class="about-tool" style="max-width:1000px;margin:0 auto 48px;padding:0 24px;">
-  <section style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px 32px;">
-    <h2 style="font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">About Life Spent On…</h2>
-    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;margin-bottom:10px;">
+  <section style="background:rgba(255,255,255,0.04);border:1px solid rgba(129,140,248,0.2);border-radius:var(--radius);padding:28px 32px;backdrop-filter:blur(12px);">
+    <h2 style="font-size:0.78rem;font-weight:700;margin-bottom:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;">About Life Spent On… — Life Time Calculator</h2>
+    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.75;margin-bottom:10px;">
       <strong style="color:var(--text);">Life Spent On…</strong> is a free life time calculator that converts your daily habits into something visceral: years of your life. Enter your age and how many hours per day you spend on activities like sleeping, scrolling social media, commuting, watching TV, or eating — and the tool converts those hours into total years spent since you were 5 years old.
     </p>
-    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;">
+    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.75;">
       <strong style="color:var(--text);">How it works:</strong> For each activity, your daily hours are multiplied by your total days lived (from age 5 to now). The results are displayed as years, months, and days — ranked from biggest time-sink to smallest. The tool also provides context comparisons to make the numbers hit harder. Everything runs in your browser privately, and you can share your exact results via a unique link that encodes your inputs.
     </p>
   </section>
 </article>
 
+<section class="related-tools" aria-labelledby="related-heading-life">
+  <h2 id="related-heading-life">More free tools you'll love</h2>
+  <div class="related-grid">
+    <a href="../am-i-cooked/" class="related-card" aria-label="Am I Cooked financial health check">
+      <span class="r-emoji" role="img" aria-label="Skull">💀</span>
+      <span class="r-name">Am I Cooked?</span>
+      <span class="r-desc">Get an honest financial reality check score. Are you thriving or cooked?</span>
+    </a>
+    <a href="../what-should-i-eat/" class="related-card" aria-label="What Should I Eat meal picker">
+      <span class="r-emoji" role="img" aria-label="Ramen">🍜</span>
+      <span class="r-name">What Should I Eat?</span>
+      <span class="r-desc">Stop staring at the fridge. Get a perfect meal suggestion with a full recipe.</span>
+    </a>
+    <a href="../pickup-lines/" class="related-card" aria-label="AI Pickup Line Generator">
+      <span class="r-emoji" role="img" aria-label="Heart with arrow">💘</span>
+      <span class="r-name">AI Pickup Line Generator</span>
+      <span class="r-desc">Generate funny, cheesy, or romantic pickup lines. Rate them, share them.</span>
+    </a>
+  </div>
+</section>
+
+<section class="popular-searches" aria-label="Popular searches for life time calculator">
+  <h3>Popular searches</h3>
+  <div class="search-tags" role="list">
+    <span class="search-tag" role="listitem">how much time have i spent sleeping</span>
+    <span class="search-tag" role="listitem">life time calculator</span>
+    <span class="search-tag" role="listitem">hours spent on phone lifetime</span>
+    <span class="search-tag" role="listitem">how many years sleeping calculator</span>
+    <span class="search-tag" role="listitem">time spent doom scrolling</span>
+    <span class="search-tag" role="listitem">life spent on social media calculator</span>
+    <span class="search-tag" role="listitem">how much of my life have i wasted</span>
+    <span class="search-tag" role="listitem">years spent commuting calculator</span>
+  </div>
+</section>
+
 <footer class="footer">
   <div class="container">
-    <p>© 2024 VibeCheck · <a href="../">← All tools</a></p>
+    <p>© 2025 VibeCheck · <a href="../">← All tools</a></p>
     <p class="mt-8" style="font-size:0.75rem;opacity:0.5">Averages based on daily habits since age 5.</p>
   </div>
 </footer>

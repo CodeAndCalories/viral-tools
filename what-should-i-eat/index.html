@@ -66,6 +66,13 @@
   ]
   </script>
   <style>
+    /* Fresh green/teal theme overrides */
+    :root {
+      --accent: #34d399;
+      --accent2: #38bdf8;
+      --accent-glow: rgba(52,211,153,0.3);
+    }
+
     .picker-layout {
       max-width: 700px;
       margin: 0 auto;
@@ -73,11 +80,14 @@
     }
 
     .picker-form {
-      background: var(--bg2);
-      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(52,211,153,0.2);
       border-radius: var(--radius);
       padding: 32px;
       margin-bottom: 32px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 0 40px rgba(52,211,153,0.06);
     }
 
     .picker-row {
@@ -91,15 +101,16 @@
 
     /* Meal result card */
     .meal-card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(52,211,153,0.2);
       border-radius: var(--radius);
       overflow: hidden;
-      animation: fadeIn 0.4s ease both;
+      animation: fadeIn 0.5s ease both;
+      backdrop-filter: blur(14px);
     }
 
     .meal-hero {
-      background: linear-gradient(135deg, #1a1530, #0f1f1a);
+      background: linear-gradient(135deg, rgba(52,211,153,0.12), rgba(56,189,248,0.12));
       padding: 40px 32px;
       text-align: center;
       border-bottom: 1px solid var(--border);
@@ -303,20 +314,55 @@
 <div id="toast" class="toast"></div>
 
 <article class="about-tool" style="max-width:700px;margin:0 auto 48px;padding:0 24px;">
-  <section style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px 32px;">
-    <h2 style="font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">About What Should I Eat?</h2>
-    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;margin-bottom:10px;">
+  <section style="background:rgba(255,255,255,0.04);border:1px solid rgba(52,211,153,0.2);border-radius:var(--radius);padding:28px 32px;backdrop-filter:blur(12px);">
+    <h2 style="font-size:0.78rem;font-weight:700;margin-bottom:14px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;">About What Should I Eat? — Free Meal Picker</h2>
+    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.75;margin-bottom:10px;">
       <strong style="color:var(--text);">What Should I Eat?</strong> is a free meal picker tool designed to end the daily "what's for dinner?" debate in seconds. Tell it your current mood, dietary preferences (vegan, keto, gluten-free, etc.), how much you want to spend, and how much time you have to cook — and it serves up a perfectly matched meal suggestion complete with a full ingredient list and step-by-step recipe.
     </p>
-    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.7;">
+    <p style="color:var(--text-muted);font-size:0.9rem;line-height:1.75;">
       <strong style="color:var(--text);">How it works:</strong> The tool matches your inputs against a curated database of meals spanning every mood and diet. All logic runs in your browser — no server, no account, no data collected. Hit "Try another" as many times as you want until something sounds right. Whether you're meal planning for the week or just hungry right now, What Should I Eat? gets you from indecision to dinner in under 10 seconds.
     </p>
   </section>
 </article>
 
+<section class="related-tools" aria-labelledby="related-heading-eat">
+  <h2 id="related-heading-eat">More free tools you'll love</h2>
+  <div class="related-grid">
+    <a href="../am-i-cooked/" class="related-card" aria-label="Am I Cooked financial health check">
+      <span class="r-emoji" role="img" aria-label="Skull">💀</span>
+      <span class="r-name">Am I Cooked?</span>
+      <span class="r-desc">Get an honest financial reality check score. Are you thriving or cooked?</span>
+    </a>
+    <a href="../life-spent/" class="related-card" aria-label="Life Spent On time calculator">
+      <span class="r-emoji" role="img" aria-label="Hourglass">⏳</span>
+      <span class="r-name">Life Spent On…</span>
+      <span class="r-desc">How many years have you spent doom-scrolling? The results will haunt you.</span>
+    </a>
+    <a href="../pickup-lines/" class="related-card" aria-label="AI Pickup Line Generator">
+      <span class="r-emoji" role="img" aria-label="Heart with arrow">💘</span>
+      <span class="r-name">AI Pickup Line Generator</span>
+      <span class="r-desc">Generate funny, cheesy, or romantic pickup lines. Rate them, share them.</span>
+    </a>
+  </div>
+</section>
+
+<section class="popular-searches" aria-label="Popular searches for meal picker">
+  <h3>Popular searches</h3>
+  <div class="search-tags" role="list">
+    <span class="search-tag" role="listitem">what should i eat tonight</span>
+    <span class="search-tag" role="listitem">random meal generator</span>
+    <span class="search-tag" role="listitem">meal picker wheel</span>
+    <span class="search-tag" role="listitem">what should i cook for dinner</span>
+    <span class="search-tag" role="listitem">meal idea generator free</span>
+    <span class="search-tag" role="listitem">food decision maker</span>
+    <span class="search-tag" role="listitem">dinner picker</span>
+    <span class="search-tag" role="listitem">easy meal ideas generator</span>
+  </div>
+</section>
+
 <footer class="footer">
   <div class="container">
-    <p>© 2024 VibeCheck · <a href="../">← All tools</a></p>
+    <p>© 2025 VibeCheck · <a href="../">← All tools</a></p>
   </div>
 </footer>
 
